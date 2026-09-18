@@ -1,5 +1,5 @@
 name: "Report a release"
-description: "Suggest a sci-fi / cyberpunk movie, series, anime, game or manga for the calendar."
+description: "Suggest a sci-fi / cyberpunk movie, series, anime, game, manga, or album for the calendar."
 title: "[Release] "
 labels: ["pending"]
 body:
@@ -13,6 +13,7 @@ body:
         - Anime
         - Video Game
         - Manga
+        - Album
     validations:
       required: true
 
@@ -29,7 +30,7 @@ body:
     id: url
     attributes:
       label: Source link
-      description: "Official page, store listing, AniList/MangaDex/IMDb entry, trailer, announcement - anything that backs this up."
+      description: "Official page, store listing, AniList/Steam/MangaDex/IMDb entry, trailer, announcement - anything that backs this up."
       placeholder: "https://..."
     validations:
       required: true
