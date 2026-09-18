@@ -43,6 +43,22 @@ body:
     validations:
       required: false
 
+  - type: checkboxes
+    id: tropes
+    attributes:
+      label: Sci-Fi & Cyberpunk Tropes (Optional)
+      description: "Select the key themes or elements present in this work:"
+      options:
+        - label: "Settings (futuristic, megastructures, simulated realities, parallel universes)"
+        - label: "Alternative / Future Histories & Post-humanism (transhumanism, mind uploading, cosmic ruins)"
+        - label: "Space travel & discoveries (interstellar voyages, FTL, nanotechnology, time travel)"
+        - label: "Aliens, mutants & androids (cyborgs, hybrid societies, artificial biospheres)"
+        - label: "Speculative technologies (brain-computer interfaces, bio-engineering, supercomputers)"
+        - label: "Political & social systems (dystopian, post-apocalyptic, post-scarcity, corporate governments)"
+        - label: "Mind & perception (telepathy, collective consciousness, artificial memories, alien semiotics)"
+    validations:
+      required: true
+
   - type: textarea
     id: why
     attributes:
