@@ -1,0 +1,15 @@
+[
+  {
+    "id": "issue-2",
+    "type": "game",
+    "title": "Nivalis Nights",
+    "date": "2026-09-26",
+    "source_url": "https://store.steampowered.com/app/1488490/Nivalis_Nights/",
+    "tropes": [
+      "Alternative and/or future histories: evolution of humans on Earth or on other planets, post-humanism, transhumanism, mind uploading, ancient alien civilizations and cosmic ruins",
+      "Speculative technologies: brain-computer interfaces, bio-engineering, superintelligent computers, robots, ray guns, programmable matter, replicators, augmented reality, altered perception",
+      "Political and social systems: utopian, dystopian, post-apocalyptic, post-post-apocalyptic, post-scarcity societies, interplanetary colonial secession and autonomy movements, corporate governments, techno-religions and futuristic cults"
+    ],
+    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocc6d.jpg"
+  }
+]
