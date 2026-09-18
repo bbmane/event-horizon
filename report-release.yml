@@ -1,0 +1,52 @@
+name: "Report a release"
+description: "Suggest a sci-fi / cyberpunk movie, series, anime, game or manga for the calendar."
+title: "[Release] "
+labels: ["pending"]
+body:
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - Movie
+        - TV Series
+        - Anime
+        - Video Game
+        - Manga
+    validations:
+      required: true
+
+  - type: input
+    id: date
+    attributes:
+      label: Release date
+      description: "Format: YYYY-MM-DD. If only the month is known, use the 1st (e.g. 2026-11-01) and say so in the notes."
+      placeholder: "2026-11-15"
+    validations:
+      required: true
+
+  - type: input
+    id: url
+    attributes:
+      label: Source link
+      description: "Official page, store listing, AniList/MangaDex/IMDb entry, trailer, announcement - anything that backs this up."
+      placeholder: "https://..."
+    validations:
+      required: true
+
+  - type: input
+    id: image
+    attributes:
+      label: Cover / poster image URL (optional)
+      placeholder: "https://..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why does this belong here?
+      description: "A sentence or two on what makes it sci-fi/cyberpunk in spirit, not just by genre tag."
+      placeholder: "e.g. near-future megacity setting, corporate dystopia, cybernetic augmentation as a core theme..."
+    validations:
+      required: true
