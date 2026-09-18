@@ -58,12 +58,3 @@ body:
         - label: "Mind and perception: mind control, telepathy, telekinesis, collective consciousness, multiple identities, artificial memories, new forms of communication (alien languages, artificial semiotics, total telepresence)"
     validations:
       required: true
-
-  - type: textarea
-    id: why
-    attributes:
-      label: Why does this belong here?
-      description: "A sentence or two on what makes it sci-fi/cyberpunk in spirit, not just by genre tag."
-      placeholder: "e.g. near-future megacity setting, corporate dystopia, cybernetic augmentation as a core theme..."
-    validations:
-      required: true
