@@ -114,6 +114,20 @@ def _flag_needs_fix(issue_number: int, reason: str):
     )
     _comment(issue_number, f"⚠️ Couldn't process this: {reason}\nFix it and re-add the `approved` label.")
 
+def _parse_tropes(body: str) -> list[str]:
+    """Estrae le opzioni spuntate dalla sezione delle checkbox nel body."""
+    tropes = []
+    # Cerca la sezione delle checkbox nel body
+    match = re.search(r"### Sci-Fi & Cyberpunk Tropes\n+(.+?)(?=\n### |\Z)", body, re.S)
+    if match:
+        lines = match.group(1).strip().split("\n")
+        for line in lines:
+            # Riconosce le righe spuntate tipo "- [x] Testo"
+            if line.strip().startswith("- [x]"):
+                # Pulisce la riga e si tiene la descrizione o una forma breve
+                trope_text = line.replace("- [x]", "").strip()
+                tropes.append(trope_text)
+    return tropes
 
 def main():
     issues = _fetch_approved_issues()
@@ -144,15 +158,15 @@ def main():
             _flag_needs_fix(number, "missing source link.")
             continue
 
+        selected_tropes = _parse_tropes(issue.get("body") or "")
+
         event = {
             "id": f"issue-{number}",
             "type": event_type,
             "title": _clean_title(issue["title"]),
             "date": date_str,
-            "genres": ["Sci-Fi"],
-            "matched_keywords": [],
             "source_url": url,
-            "note": fields.get("why does this belong here?", "").strip(),
+            "tropes": selected_tropes, 
         }
         image = fields.get("cover / poster image url (optional)", "").strip()
         if image:
