@@ -101,9 +101,31 @@
     padding: 0.6rem 0.7rem;
   }
 
+  /* Il "select one" iniziale è required+disabled sull'opzione vuota, quindi
+     il <select> resta :invalid finché non si sceglie un valore reale: usiamo
+     questo per far coincidere il colore con placeholder/hint fino a quel momento. */
+  select { color: var(--text-hint); }
+  select:valid { color: var(--text); }
+
+  select option {
+    color: var(--text);
+    background: var(--bg-raised);
+  }
+  select option:disabled { color: var(--text-hint); }
+
   input:focus, select:focus {
     outline: none;
     border-color: var(--accent-dim);
+  }
+
+  /* L'icona nativa del calendario è nera di default: invisibile sullo sfondo scuro. */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.9);
+    cursor: pointer;
+    opacity: 0.8;
+  }
+  input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
   }
 
   fieldset { border: 1px solid var(--border); padding: 0.9rem 1rem; }
@@ -290,6 +312,19 @@
   const submitBtn = document.getElementById('submitBtn');
 
   const titleInput = document.getElementById('title');
+
+  const TITLE_PLACEHOLDER_POOL = [
+    'The Ghost in the Shell (2026)',
+    'AKIRA (Shin Anime)',
+    'Blade Runner 2099',
+    'Cyberpunk: Edgerunners [SEASON 2]',
+    'Neuromancer',
+    'Star City',
+    'Alien: Earth',
+    'Tron: Ares',
+    'Mobile Suit Gundam GQuuuuuuX',
+  ];
+  titleInput.placeholder = `e.g. ${TITLE_PLACEHOLDER_POOL[Math.floor(Math.random() * TITLE_PLACEHOLDER_POOL.length)]}`;
   const typeInput = document.getElementById('type');
   const dateInput = document.getElementById('date');
   const urlInput = document.getElementById('url');
