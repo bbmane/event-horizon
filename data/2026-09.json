@@ -36,6 +36,19 @@
     "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cobteq.jpg"
   },
   {
+    "id": "issue-7",
+    "type": "game",
+    "title": "Control Resonant",
+    "date": "2026-09-24",
+    "source_url": "https://store.steampowered.com/app/3669870/CONTROL_Resonant/",
+    "tags": [
+      "aliens-first-contact",
+      "dystopian",
+      "post-apocalyptic-alternative-histories"
+    ],
+    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coc64f.jpg"
+  },
+  {
     "id": "issue-2",
     "type": "game",
     "title": "Nivalis Nights",
