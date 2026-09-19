@@ -44,17 +44,27 @@ body:
       required: false
 
   - type: checkboxes
-    id: tropes
+    id: tags
     attributes:
-      label: Sci-Fi & Cyberpunk Tropes
-      description: "Select the core elements and themes defining this work:"
+      label: "Sci-Fi Tags & Themes"
+      description: "Select all the tags, themes, and settings that apply to this work:"
       options:
-        - label: "Worldbuilding: futuristic, other worlds, subterranean Earth, parallel universes, interplanetary warfare, orbital cities, megastructures (Dyson spheres, Niven rings), simulated realities, virtual worlds, artificial multiverses"
-        - label: "Alternative and/or future histories: evolution of humans on Earth or on other planets, post-humanism, transhumanism, mind uploading, ancient alien civilizations and cosmic ruins"
-        - label: "Space travel and discoveries: interstellar voyages, teleportation, time travel, faster-than-light travel or communication, nanotechnology, gravitational manipulation, black hole exploration"
-        - label: "Aliens and identities: extraterrestrials, mutants, androids, enhanced humans / cyborgs, hybrid societies of humans, AI, and alien species, alien ecologies and artificial biospheres"
-        - label: "Speculative technologies: brain-computer interfaces, bio-engineering, superintelligent computers, robots, ray guns, programmable matter, replicators, augmented reality, altered perception"
-        - label: "Political and social systems: utopian, dystopian, post-apocalyptic, post-post-apocalyptic, post-scarcity societies, interplanetary colonial secession and autonomy movements, corporate governments, techno-religions and futuristic cults"
-        - label: "Mind and perception: mind control, telepathy, telekinesis, collective consciousness, multiple identities, artificial memories, new forms of communication (alien languages, artificial semiotics, total telepresence)"
+        - label: "Aliens & First Contact"
+        - label: "Biopunk & Genetic Engineering"
+        - label: "Corporate Governments & Techno-Religions"
+        - label: "Cyberpunk"
+        - label: "Dystopian"
+        - label: "Hard Sci-Fi"
+        - label: "Kaiju & Tokusatsu"
+        - label: "Mecha"
+        - label: "Megastructures (Dyson spheres, orbital cities)"
+        - label: "Mind Control, Collective Consciousness & Telepathy"
+        - label: "Post-Apocalyptic & Alternative Histories"
+        - label: "Space Opera & Interplanetary Warfare"
+        - label: "Speculative Tech, Cybernetics, AI & Robotics"
+        - label: "Steampunk & Retrofuturism"
+        - label: "Time Travel & Space Exploration"
+        - label: "Transhumanism, Post-humanism & Mind Uploading"
+        - label: "Virtual Realities, Simulation & Multiverses"
     validations:
       required: true
