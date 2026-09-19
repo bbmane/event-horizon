@@ -135,6 +135,37 @@
     background: var(--bg-raised);
   }
 
+  .img-preview {
+    position: fixed;
+    z-index: 50;
+    pointer-events: none;
+    border: 1px solid var(--accent-dim);
+    background: var(--bg-raised);
+    padding: 5px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 0.12s ease, transform 0.12s ease;
+  }
+
+  .img-preview.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .img-preview img {
+    display: block;
+    max-width: 200px;
+    max-height: 260px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  @media (hover: none) {
+    .img-preview { display: none; }
+  }
+
   .event-info {
     display: flex;
     flex-direction: column;
@@ -409,6 +440,48 @@
     }
   }
 
+  // --- Anteprima immagine on-hover ---
+  const imgPreview = document.createElement('div');
+  imgPreview.className = 'img-preview';
+  const imgPreviewImg = document.createElement('img');
+  imgPreview.appendChild(imgPreviewImg);
+  document.body.appendChild(imgPreview);
+
+  function showImgPreview(thumbEl, src) {
+    if (imgPreviewImg.src !== src) imgPreviewImg.src = src;
+    imgPreview.classList.add('visible');
+    positionImgPreview(thumbEl);
+  }
+
+  function positionImgPreview(thumbEl) {
+    const rect = thumbEl.getBoundingClientRect();
+    const margin = 10;
+    const previewRect = imgPreview.getBoundingClientRect();
+    const pw = previewRect.width || 210;
+    const ph = previewRect.height || 210;
+
+    let left = rect.right + margin;
+    if (left + pw > window.innerWidth) {
+      left = rect.left - pw - margin;
+    }
+    left = Math.max(margin, Math.min(left, window.innerWidth - pw - margin));
+
+    let top = rect.top;
+    if (top + ph > window.innerHeight - margin) {
+      top = window.innerHeight - ph - margin;
+    }
+    top = Math.max(margin, top);
+
+    imgPreview.style.left = `${left}px`;
+    imgPreview.style.top = `${top}px`;
+  }
+
+  function hideImgPreview() {
+    imgPreview.classList.remove('visible');
+  }
+
+  window.addEventListener('scroll', hideImgPreview, { passive: true });
+
   function isToday(dateStr) {
     return dateStr === TODAY.toISOString().slice(0, 10);
   }
@@ -477,6 +550,8 @@
           thumbImg.src = ev.image_url;
           thumbImg.alt = '';
           thumbImg.loading = 'lazy';
+          thumbImg.addEventListener('mouseenter', () => showImgPreview(thumbImg, ev.image_url));
+          thumbImg.addEventListener('mouseleave', hideImgPreview);
           thumbLink.appendChild(thumbImg);
           row.appendChild(thumbLink);
         }
