@@ -12,7 +12,8 @@
     --accent-dim: #04bac5;
     --accent-faint: #123038;
     --text: #c5d8e0;
-    --text-dim: #cdcdcd;
+    --text-dim: #e1e1e1;
+    --text-hint: #595959;
     --border: #1a2630;
     --err: #ff5c7a;
     --ok: #7dffb3;
@@ -80,8 +81,13 @@
 
   .field .hint {
     font-size: 0.75rem;
-    color: var(--text-dim);
+    color: var(--text-hint);
     margin-top: 0.3rem;
+  }
+
+  input::placeholder {
+    color: var(--text-hint);
+    opacity: 1; 
   }
 
   input[type="text"], input[type="url"], input[type="date"], select {
