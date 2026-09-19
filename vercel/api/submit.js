@@ -12,6 +12,25 @@
  */
 
 const VALID_TYPES = ["Movie", "TV Series", "Anime", "Video Game", "Manga", "Album"];
+const VALID_TAGS = new Set([
+  "Aliens & First Contact",
+  "Biopunk & Genetic Engineering",
+  "Corporate Governments & Techno-Religions",
+  "Cyberpunk",
+  "Dystopian",
+  "Hard Sci-Fi",
+  "Kaiju & Tokusatsu",
+  "Mecha",
+  "Megastructures (Dyson spheres, orbital cities)",
+  "Mind Control, Collective Consciousness & Telepathy",
+  "Post-Apocalyptic & Alternative Histories",
+  "Space Opera & Interplanetary Warfare",
+  "Speculative Tech, Cybernetics, AI & Robotics",
+  "Steampunk & Retrofuturism",
+  "Time Travel & Space Exploration",
+  "Transhumanism, Post-humanism & Mind Uploading",
+  "Virtual Realities, Simulation & Multiverses",
+]);
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const MAX_LEN = { title: 150, url: 500, image: 500, tag: 80 };
 
@@ -102,7 +121,7 @@ export default async function handler(req, res) {
     return;
   }
   for (const t of tags) {
-    if (typeof t !== "string" || t.length > MAX_LEN.tag) {
+    if (typeof t !== "string" || !VALID_TAGS.has(t)) {
       res.status(400).json({ ok: false, error: "Invalid tag." });
       return;
     }
