@@ -190,6 +190,87 @@
     text-transform: lowercase;
   }
 
+  .filters {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .type-filters {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .filter-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0.4rem 0.55rem;
+    cursor: pointer;
+    opacity: 0.4;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
+  }
+
+  .filter-btn.active {
+    opacity: 1;
+    border-color: var(--accent-dim);
+  }
+
+  .filter-btn:hover { border-color: var(--accent-dim); }
+  .filter-btn:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+
+  .tag-toggle,
+  .clear-filters {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.7rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tag-toggle:hover,
+  .clear-filters:hover { border-color: var(--accent-dim); color: var(--accent); }
+  .tag-toggle.has-selection { border-color: var(--accent-dim); color: var(--accent); }
+
+  .clear-filters { color: var(--accent-dim); margin-left: auto; }
+
+  .tag-panel {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    padding: 0.8rem;
+    margin-bottom: 1.4rem;
+    border: 1px dashed var(--border);
+  }
+
+  .tag-chip {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    letter-spacing: 0.02em;
+    text-transform: lowercase;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+
+  .tag-chip:hover { border-color: var(--accent-dim); }
+
+  .tag-chip.active {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
   .empty-state {
     color: var(--text-dim);
     font-size: 1rem;
@@ -244,6 +325,14 @@
     <span class="month-label" id="monthLabel">—</span>
     <button id="nextMonth" aria-label="Next month">next &rarr;</button>
   </div>
+
+  <div class="filters">
+    <div class="type-filters" id="typeFilters"></div>
+    <button class="tag-toggle" id="tagToggle" aria-expanded="false">tags ▾</button>
+    <button class="clear-filters" id="clearFilters" hidden>clear ×</button>
+  </div>
+
+  <div class="tag-panel" id="tagPanel" hidden></div>
 
   <div id="calendar"></div>
 
@@ -346,7 +435,10 @@
     container.innerHTML = '';
 
     if (events.length === 0) {
-      container.innerHTML = '<div class="empty-state">no releases logged for this month</div>';
+      const msg = currentEvents.length > 0
+        ? 'no releases match the current filters'
+        : 'no releases logged for this month';
+      container.innerHTML = `<div class="empty-state">${msg}</div>`;
       return;
     }
 
@@ -429,9 +521,102 @@
     }
   }
 
+  // --- Filtri ---
+  let currentEvents = [];
+  const activeTypes = new Set(Object.keys(ICONS));   // tutti i type attivi di default
+  const activeTagSlugs = new Set();                  // nessun tag = nessun filtro sui tag
+
+  const typeFiltersEl = document.getElementById('typeFilters');
+  const tagPanelEl = document.getElementById('tagPanel');
+  const tagToggleEl = document.getElementById('tagToggle');
+  const clearFiltersEl = document.getElementById('clearFilters');
+
+  for (const [type, icon] of Object.entries(ICONS)) {
+    const btn = document.createElement('button');
+    btn.className = 'filter-btn active';
+    btn.type = 'button';
+    btn.textContent = icon;
+    btn.title = type;
+    btn.setAttribute('aria-label', `toggle ${type}`);
+    btn.addEventListener('click', () => {
+      if (activeTypes.has(type)) {
+        activeTypes.delete(type);
+        btn.classList.remove('active');
+      } else {
+        activeTypes.add(type);
+        btn.classList.add('active');
+      }
+      updateClearVisibility();
+      renderFiltered();
+    });
+    typeFiltersEl.appendChild(btn);
+  }
+
+  for (const [slug, label] of Object.entries(TAG_LABELS)) {
+    const chip = document.createElement('button');
+    chip.className = 'tag-chip';
+    chip.type = 'button';
+    chip.textContent = label;
+    chip.addEventListener('click', () => {
+      if (activeTagSlugs.has(slug)) {
+        activeTagSlugs.delete(slug);
+        chip.classList.remove('active');
+      } else {
+        activeTagSlugs.add(slug);
+        chip.classList.add('active');
+      }
+      updateTagToggleLabel();
+      updateClearVisibility();
+      renderFiltered();
+    });
+    tagPanelEl.appendChild(chip);
+  }
+
+  tagToggleEl.addEventListener('click', () => {
+    const isHidden = tagPanelEl.hidden;
+    tagPanelEl.hidden = !isHidden;
+    tagToggleEl.setAttribute('aria-expanded', String(isHidden));
+  });
+
+  clearFiltersEl.addEventListener('click', () => {
+    activeTagSlugs.clear();
+    for (const type of Object.keys(ICONS)) activeTypes.add(type);
+    typeFiltersEl.querySelectorAll('.filter-btn').forEach((b) => b.classList.add('active'));
+    tagPanelEl.querySelectorAll('.tag-chip').forEach((c) => c.classList.remove('active'));
+    updateTagToggleLabel();
+    updateClearVisibility();
+    renderFiltered();
+  });
+
+  function updateTagToggleLabel() {
+    const n = activeTagSlugs.size;
+    tagToggleEl.textContent = n > 0 ? `tags (${n}) ▾` : 'tags ▾';
+    tagToggleEl.classList.toggle('has-selection', n > 0);
+  }
+
+  function updateClearVisibility() {
+    const allTypesActive = activeTypes.size === Object.keys(ICONS).length;
+    clearFiltersEl.hidden = allTypesActive && activeTagSlugs.size === 0;
+  }
+
+  function applyFilters(events) {
+    return events.filter((ev) => {
+      if (!activeTypes.has(ev.type)) return false;
+      if (activeTagSlugs.size > 0) {
+        const tags = Array.isArray(ev.tags) ? ev.tags : [];
+        if (!tags.some((t) => activeTagSlugs.has(t))) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderFiltered() {
+    render(applyFilters(currentEvents));
+  }
+
   async function refresh() {
-    const events = await loadMonth(currentYear, currentMonth);
-    render(events);
+    currentEvents = await loadMonth(currentYear, currentMonth);
+    renderFiltered();
   }
 
   document.getElementById('prevMonth').addEventListener('click', () => {
