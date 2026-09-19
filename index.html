@@ -134,19 +134,25 @@
     background: var(--bg-raised);
   }
 
-  .event .icon {
-    color: var(--accent-dim);
-    width: 1.5rem;
-    flex-shrink: 0;
-    text-align: center;
-    padding-top: 0.15rem;
-  }
-
   .event-info {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
     min-width: 0;
+    flex: 1;
+  }
+
+  /* Contenitore per icona e titolo allineati perfettamente */
+  .event-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .event .icon {
+    color: var(--accent-dim);
+    flex-shrink: 0;
+    text-align: center;
   }
 
   .event a {
@@ -373,21 +379,28 @@
           row.appendChild(thumbLink);
         }
 
+        const info = document.createElement('div');
+        info.className = 'event-info';
+
+        // Riga testuale con icona + titolo affiancati
+        const headerRow = document.createElement('div');
+        headerRow.className = 'event-header';
+
         const icon = document.createElement('span');
         icon.className = 'icon';
         icon.textContent = ICONS[ev.type] || '•';
-        row.appendChild(icon);
-
-        const info = document.createElement('div');
-        info.className = 'event-info';
+        headerRow.appendChild(icon);
 
         const link = document.createElement('a');
         link.target = '_blank';
         link.rel = 'noopener';
         link.textContent = ev.title;
         link.href = isSafeHttpUrl(ev.source_url) ? ev.source_url : '#';
-        info.appendChild(link);
+        headerRow.appendChild(link);
 
+        info.appendChild(headerRow);
+
+        // Tag a scomparsa in hover
         if (Array.isArray(ev.tags) && ev.tags.length > 0) {
           const tagsRow = document.createElement('div');
           tagsRow.className = 'event-tags';
@@ -401,7 +414,6 @@
         }
 
         row.appendChild(info);
-
         group.appendChild(row);
       }
 
