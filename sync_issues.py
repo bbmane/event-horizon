@@ -114,20 +114,23 @@ def _flag_needs_fix(issue_number: int, reason: str):
     )
     _comment(issue_number, f"⚠️ Couldn't process this: {reason}\nFix it and re-add the `approved` label.")
 
-def _parse_tropes(body: str) -> list[str]:
-    """Estrae le opzioni spuntate dalla sezione delle checkbox nel body."""
-    tropes = []
-    # Cerca la sezione delle checkbox nel body
-    match = re.search(r"### Sci-Fi & Cyberpunk Tropes\n+(.+?)(?=\n### |\Z)", body, re.S)
+def _parse_tags(body: str) -> list[str]:
+    tags = []
+    match = re.search(r"### Sci-Fi Tags & Themes\n+(.+?)(?=\n### |\Z)", body, re.S)
     if match:
         lines = match.group(1).strip().split("\n")
         for line in lines:
-            # Riconosce le righe spuntate tipo "- [x] Testo"
             if line.strip().startswith("- [x]"):
-                # Pulisce la riga e si tiene la descrizione o una forma breve
-                trope_text = line.replace("- [x]", "").strip()
-                tropes.append(trope_text)
-    return tropes
+                tag_text = line.replace("- [x]", "").strip()
+                clean_name = tag_text.split(" (")[0]
+                slug = (
+                    clean_name.lower()
+                    .replace(" & ", "-")
+                    .replace(", ", "-")
+                    .replace(" ", "-")
+                )
+                tags.append(slug)
+    return tags
 
 def main():
     issues = _fetch_approved_issues()
@@ -158,7 +161,7 @@ def main():
             _flag_needs_fix(number, "missing source link.")
             continue
 
-        selected_tropes = _parse_tropes(issue.get("body") or "")
+        selected_tags = _parse_tags(issue.get("body") or "")
 
         event = {
             "id": f"issue-{number}",
@@ -166,7 +169,7 @@ def main():
             "title": _clean_title(issue["title"]),
             "date": date_str,
             "source_url": url,
-            "tropes": selected_tropes, 
+            "tags": selected_tags, 
         }
         image = fields.get("cover / poster image url (optional)", "").strip()
         if image:
