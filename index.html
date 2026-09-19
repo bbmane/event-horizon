@@ -161,6 +161,17 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.35rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.3s ease, opacity 0.3s ease, margin-top 0.3s ease;
+    margin-top: 0;
+  }
+
+  .event:hover .event-tags {
+    max-height: 150px;
+    opacity: 1;
+    margin-top: 0.2rem;
   }
 
   .event-tags .tag {
@@ -202,6 +213,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     .header h1::after { animation: none; }
+    .event-tags { transition: none; }
   }
 </style>
 </head>
@@ -262,8 +274,6 @@
     'Virtual Realities, Simulation & Multiverses',
   ];
 
-  // Mirrors the exact slugification sync_issues.py does, so we can map a
-  // slug back to the original, correctly-punctuated tag text.
   function slugify(tagText) {
     const cleanName = tagText.split(' (')[0];
     return cleanName
@@ -279,7 +289,6 @@
 
   function formatTagLabel(slug) {
     if (TAG_LABELS[slug]) return TAG_LABELS[slug];
-    // Fallback for any tag not in the known list (e.g. added later).
     return slug
       .split('-')
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
