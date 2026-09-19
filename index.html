@@ -224,6 +224,15 @@
     return `${year}-${String(month + 1).padStart(2, '0')}`;
   }
 
+  function isSafeHttpUrl(value) {
+    try {
+      const u = new URL(value, window.location.href);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
+
   function isToday(dateStr) {
     return dateStr === TODAY.toISOString().slice(0, 10);
   }
@@ -278,17 +287,33 @@
       for (const ev of dayEvents) {
         const row = document.createElement('div');
         row.className = 'event';
-        
-        const iconHtml = `<span class="icon">${ICONS[ev.type] || '•'}</span>`;
-        const thumbHtml = ev.image_url
-          ? `<a href="${ev.image_url}" target="_blank" rel="noopener"><img class="thumb" src="${ev.image_url}" alt="" loading="lazy"></a>`
-          : '';
 
-        row.innerHTML = `
-          ${thumbHtml}
-          ${iconHtml}
-          <a href="${ev.source_url}" target="_blank" rel="noopener">${ev.title}</a>
-        `;
+        if (ev.image_url && isSafeHttpUrl(ev.image_url)) {
+          const thumbLink = document.createElement('a');
+          thumbLink.href = ev.image_url;
+          thumbLink.target = '_blank';
+          thumbLink.rel = 'noopener';
+          const thumbImg = document.createElement('img');
+          thumbImg.className = 'thumb';
+          thumbImg.src = ev.image_url;
+          thumbImg.alt = '';
+          thumbImg.loading = 'lazy';
+          thumbLink.appendChild(thumbImg);
+          row.appendChild(thumbLink);
+        }
+
+        const icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = ICONS[ev.type] || '•';
+        row.appendChild(icon);
+
+        const link = document.createElement('a');
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = ev.title;
+        link.href = isSafeHttpUrl(ev.source_url) ? ev.source_url : '#';
+        row.appendChild(link);
+
         group.appendChild(row);
       }
 
