@@ -7,6 +7,10 @@ on:
     - cron: "0 6 * * *"   # rete di sicurezza giornaliera alle 6:00 UTC
   workflow_dispatch:
 
+concurrency:
+  group: sync-releases
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
