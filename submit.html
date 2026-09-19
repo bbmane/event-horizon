@@ -104,8 +104,8 @@
 
   .tags {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem 1rem;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
   }
 
   .tags label {
@@ -145,6 +145,25 @@
   }
   .status.ok { display: block; border-left-color: var(--ok); color: var(--ok); }
   .status.err { display: block; border-left-color: var(--err); color: var(--err); }
+
+  .field.invalid input,
+  .field.invalid select {
+    border-color: var(--err);
+  }
+
+  fieldset.invalid { border-color: var(--err); }
+
+  .field-error {
+    display: none;
+    color: var(--err);
+    font-size: 0.75rem;
+    margin-top: 0.3rem;
+  }
+
+  .field.invalid .field-error,
+  fieldset.invalid .field-error {
+    display: block;
+  }
 </style>
 </head>
 <body>
@@ -164,12 +183,13 @@
       <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
     </div>
 
-    <div class="field">
+    <div class="field" id="titleField">
       <label for="title">Title</label>
       <input type="text" id="title" name="title" placeholder="e.g. Neon Horizon 2" required maxlength="150">
+      <div class="field-error">Title is required.</div>
     </div>
 
-    <div class="field">
+    <div class="field" id="typeField">
       <label for="type">Type</label>
       <select id="type" name="type" required>
         <option value="" disabled selected>select one</option>
@@ -180,18 +200,21 @@
         <option>Manga</option>
         <option>Album</option>
       </select>
+      <div class="field-error">Please select a type.</div>
     </div>
 
-    <div class="field">
+    <div class="field" id="dateField">
       <label for="date">Release date</label>
       <input type="date" id="date" name="date" required>
-      <div class="hint">Se conosci solo il mese, usa il giorno 1.</div>
+      <div class="hint">If you only know the month, use the 1st.</div>
+      <div class="field-error">Please enter a valid release date.</div>
     </div>
 
-    <div class="field">
+    <div class="field" id="urlField">
       <label for="url">Source link</label>
       <input type="url" id="url" name="url" placeholder="https://..." required>
-      <div class="hint">Pagina ufficiale, store, AniList/Steam/MangaDex/IMDb, trailer, annuncio.</div>
+      <div class="hint">Official page, store listing, AniList/Steam/MangaDex/IMDb, trailer, announcement.</div>
+      <div class="field-error">Please enter a valid source link.</div>
     </div>
 
     <div class="field">
@@ -199,11 +222,12 @@
       <input type="url" id="image" name="image" placeholder="https://...">
     </div>
 
-    <fieldset>
+    <fieldset id="tagsField">
       <legend>Sci-Fi Tags &amp; Themes</legend>
       <div class="tags" id="tagsGrid">
         <!-- populated by JS to keep labels in one place -->
       </div>
+      <div class="field-error">Select at least one tag.</div>
     </fieldset>
 
     <button type="submit" id="submitBtn">submit release</button>
@@ -250,10 +274,75 @@
   const statusEl = document.getElementById('status');
   const submitBtn = document.getElementById('submitBtn');
 
+  const titleInput = document.getElementById('title');
+  const typeInput = document.getElementById('type');
+  const dateInput = document.getElementById('date');
+  const urlInput = document.getElementById('url');
+  const titleField = document.getElementById('titleField');
+  const typeField = document.getElementById('typeField');
+  const dateField = document.getElementById('dateField');
+  const urlField = document.getElementById('urlField');
+  const tagsField = document.getElementById('tagsField');
+
+  function setInvalid(el, invalid) {
+    el.classList.toggle('invalid', invalid);
+  }
+
+  // Mirrors the required fields of the "Report a release" GitHub issue
+  // template: title, type, date, source link, and at least one tag.
+  function validate() {
+    let firstInvalid = null;
+    let ok = true;
+
+    const titleOk = titleInput.value.trim().length > 0;
+    setInvalid(titleField, !titleOk);
+    if (!titleOk && !firstInvalid) firstInvalid = titleInput;
+    ok = ok && titleOk;
+
+    const typeOk = typeInput.value.trim().length > 0;
+    setInvalid(typeField, !typeOk);
+    if (!typeOk && !firstInvalid) firstInvalid = typeInput;
+    ok = ok && typeOk;
+
+    const dateOk = dateInput.value.trim().length > 0;
+    setInvalid(dateField, !dateOk);
+    if (!dateOk && !firstInvalid) firstInvalid = dateInput;
+    ok = ok && dateOk;
+
+    const urlOk = urlInput.checkValidity() && urlInput.value.trim().length > 0;
+    setInvalid(urlField, !urlOk);
+    if (!urlOk && !firstInvalid) firstInvalid = urlInput;
+    ok = ok && urlOk;
+
+    const tagsOk = form.querySelectorAll('input[name="tags"]:checked').length > 0;
+    setInvalid(tagsField, !tagsOk);
+    if (!tagsOk && !firstInvalid) firstInvalid = form.querySelector('input[name="tags"]');
+    ok = ok && tagsOk;
+
+    if (firstInvalid) firstInvalid.focus();
+    return ok;
+  }
+
+  // Clear a field's error state as soon as the user fixes it.
+  [titleInput, typeInput, dateInput, urlInput].forEach((el) => {
+    el.addEventListener('input', () => setInvalid(el.closest('.field'), false));
+  });
+  grid.addEventListener('change', () => {
+    if (form.querySelectorAll('input[name="tags"]:checked').length > 0) {
+      setInvalid(tagsField, false);
+    }
+  });
+
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     statusEl.className = 'status';
     statusEl.textContent = '';
+
+    if (!validate()) {
+      statusEl.className = 'status err';
+      statusEl.textContent = '⚠️ Please fill in all required fields.';
+      return;
+    }
 
     const data = new FormData(form);
 
@@ -283,15 +372,15 @@
 
       if (resp.ok && result.ok) {
         statusEl.className = 'status ok';
-        statusEl.textContent = `✅ Inviato (issue #${result.issue_number}). Verrà rivisto e apparirà sul calendario una volta approvato.`;
+        statusEl.textContent = `✅ Submitted (issue #${result.issue_number}). It will be reviewed and show up on the calendar once approved.`;
         form.reset();
       } else {
         statusEl.className = 'status err';
-        statusEl.textContent = `⚠️ ${result.error || 'Qualcosa è andato storto, riprova.'}`;
+        statusEl.textContent = `⚠️ ${result.error || 'Something went wrong, please try again.'}`;
       }
     } catch (err) {
       statusEl.className = 'status err';
-      statusEl.textContent = '⚠️ Impossibile contattare il server. Riprova più tardi.';
+      statusEl.textContent = '⚠️ Could not reach the server. Please try again later.';
     } finally {
       submitBtn.disabled = false;
       submitBtn.textContent = 'submit release';
