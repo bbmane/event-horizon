@@ -320,12 +320,6 @@
     <span class="prompt">community-curated sci-fi & cyberpunk calendar</span>
   </div>
 
-  <div class="nav">
-    <button id="prevMonth" aria-label="Previous month">&larr; prev</button>
-    <span class="month-label" id="monthLabel">—</span>
-    <button id="nextMonth" aria-label="Next month">next &rarr;</button>
-  </div>
-
   <div class="filters">
     <div class="type-filters" id="typeFilters"></div>
     <button class="tag-toggle" id="tagToggle" aria-expanded="false">tags ▾</button>
@@ -333,6 +327,12 @@
   </div>
 
   <div class="tag-panel" id="tagPanel" hidden></div>
+
+  <div class="nav">
+    <button id="prevMonth" aria-label="Previous month">&larr; prev</button>
+    <span class="month-label" id="monthLabel">—</span>
+    <button id="nextMonth" aria-label="Next month">next &rarr;</button>
+  </div>
 
   <div id="calendar"></div>
 
@@ -572,10 +572,28 @@
     tagPanelEl.appendChild(chip);
   }
 
-  tagToggleEl.addEventListener('click', () => {
+  tagToggleEl.addEventListener('click', (e) => {
+    e.stopPropagation();
     const isHidden = tagPanelEl.hidden;
     tagPanelEl.hidden = !isHidden;
     tagToggleEl.setAttribute('aria-expanded', String(isHidden));
+  });
+
+  document.addEventListener('click', (e) => {
+    if (tagPanelEl.hidden) return;
+    const clickedInsidePanel = tagPanelEl.contains(e.target);
+    if (!clickedInsidePanel) {
+      tagPanelEl.hidden = true;
+      tagToggleEl.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !tagPanelEl.hidden) {
+      tagPanelEl.hidden = true;
+      tagToggleEl.setAttribute('aria-expanded', 'false');
+      tagToggleEl.focus();
+    }
   });
 
   clearFiltersEl.addEventListener('click', () => {
