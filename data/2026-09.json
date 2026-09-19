@@ -1,5 +1,30 @@
 [
   {
+    "id": "issue-5",
+    "type": "game",
+    "title": "Rig Riot",
+    "date": "2026-09-14",
+    "source_url": "https://store.steampowered.com/app/3180340/RIG_Riot/",
+    "tags": [
+      "mecha",
+      "megastructures",
+      "speculative-tech-cybernetics-ai-robotics"
+    ],
+    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/co9lh8.jpg"
+  },
+  {
+    "id": "issue-4",
+    "type": "game",
+    "title": "Patlabor the Case Files",
+    "date": "2026-09-16",
+    "source_url": "https://store.steampowered.com/app/3275400/PATLABOR_the_Case_Files/",
+    "tags": [
+      "mecha",
+      "speculative-tech-cybernetics-ai-robotics"
+    ],
+    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cobteq.jpg"
+  },
+  {
     "id": "issue-2",
     "type": "game",
     "title": "Nivalis Nights",
