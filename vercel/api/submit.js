@@ -82,28 +82,28 @@ export default async function handler(req, res) {
   const tags = Array.isArray(payload.tags) ? payload.tags.slice(0, 20) : [];
 
   if (!title || title.length > MAX_LEN.title) {
-    res.status(400).json({ ok: false, error: "Titolo mancante o troppo lungo." });
+    res.status(400).json({ ok: false, error: "Missing or overly long title." });
     return;
   }
   if (!VALID_TYPES.includes(type)) {
-    res.status(400).json({ ok: false, error: "Tipo non valido." });
+    res.status(400).json({ ok: false, error: "Invalid type." });
     return;
   }
   if (!DATE_RE.test(date) || Number.isNaN(new Date(date).getTime())) {
-    res.status(400).json({ ok: false, error: "Data non valida, usa YYYY-MM-DD." });
+    res.status(400).json({ ok: false, error: "Invalid date, use YYYY-MM-DD." });
     return;
   }
   if (!isHttpUrl(url) || url.length > MAX_LEN.url) {
-    res.status(400).json({ ok: false, error: "Source link non valido." });
+    res.status(400).json({ ok: false, error: "Invalid source link." });
     return;
   }
   if (image && (!isHttpUrl(image) || image.length > MAX_LEN.image)) {
-    res.status(400).json({ ok: false, error: "URL immagine non valido." });
+    res.status(400).json({ ok: false, error: "Invalid image URL." });
     return;
   }
   for (const t of tags) {
     if (typeof t !== "string" || t.length > MAX_LEN.tag) {
-      res.status(400).json({ ok: false, error: "Tag non valido." });
+      res.status(400).json({ ok: false, error: "Invalid tag." });
       return;
     }
   }
@@ -130,7 +130,7 @@ export default async function handler(req, res) {
   if (!ghResp.ok) {
     const errText = await ghResp.text();
     console.error("GitHub API error", ghResp.status, errText);
-    res.status(502).json({ ok: false, error: "Errore nel creare la issue, riprova più tardi." });
+    res.status(502).json({ ok: false, error: "Error creating the issue, please try again later." });
     return;
   }
 
