@@ -1,5 +1,16 @@
 [
   {
+    "id": "issue-6",
+    "type": "album",
+    "title": "Current Value - Hard Light",
+    "date": "2026-09-10",
+    "source_url": "https://mcrecordings.bandcamp.com/album/hard-light",
+    "tags": [
+      "aliens-first-contact"
+    ],
+    "image_url": "https://f4.bcbits.com/img/a3557052542_10.jpg"
+  },
+  {
     "id": "issue-5",
     "type": "game",
     "title": "Rig Riot",
