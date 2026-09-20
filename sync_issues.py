@@ -23,7 +23,6 @@ vecchio file mensile a quello nuovo (vedi merge.py).
 """
 import os
 import re
-import sys
 from datetime import date
 
 import requests
