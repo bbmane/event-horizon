@@ -23,6 +23,7 @@ vecchio file mensile a quello nuovo (vedi merge.py).
 """
 import os
 import re
+import sys
 from datetime import date
 
 import requests
@@ -37,6 +38,22 @@ HEADERS = {
     "Authorization": f"Bearer {GITHUB_TOKEN}",
     "Accept": "application/vnd.github+json",
 }
+
+# Raccoglie i problemi incontrati mentre si scrive su GitHub (label, commenti,
+# chiusura issue). Non blocchiamo l'elaborazione delle altre issue per un
+# singolo fallimento, ma alla fine facciamo fallire l'Action se la lista non
+# è vuota, così il problema è visibile nei log invece di sparire in silenzio.
+_write_errors: list[str] = []
+
+
+def _check(resp, context: str) -> bool:
+    """True se la risposta è ok. Altrimenti logga e registra l'errore."""
+    if resp.ok:
+        return True
+    msg = f"{context} -> HTTP {resp.status_code}: {resp.text[:200]}"
+    print(f"  ⚠️ {msg}")
+    _write_errors.append(msg)
+    return False
 
 TYPE_MAP = {
     "movie": "movie",
@@ -89,39 +106,49 @@ def _clean_title(raw_title: str) -> str:
 
 
 def _comment(issue_number: int, body: str):
-    requests.post(
+    resp = requests.post(
         f"{API_BASE}/issues/{issue_number}/comments",
         headers=HEADERS, json={"body": body}, timeout=15,
     )
+    _check(resp, f"issue #{issue_number}: post comment")
 
 
 def _remove_labels(issue_number: int, labels: list[str]):
-    """Rimuove ciascuna label passata, ignorando quelle già assenti
-    (l'API risponde 404 in quel caso, che non è un errore per noi)."""
+    """Rimuove ciascuna label passata. Un 404 significa che la label non
+    era già presente - non è un errore per noi, quindi non lo registriamo;
+    qualunque altro codice non-ok invece viene loggato/tracciato."""
     for label in labels:
-        requests.delete(
+        resp = requests.delete(
             f"{API_BASE}/issues/{issue_number}/labels/{label}",
             headers=HEADERS, timeout=15,
         )
+        if resp.status_code != 404:
+            _check(resp, f"issue #{issue_number}: remove label '{label}'")
 
 
 def _close_and_relabel(issue_number: int, add: str, remove: list[str]):
-    requests.post(
+    resp = requests.post(
         f"{API_BASE}/issues/{issue_number}/labels",
         headers=HEADERS, json={"labels": [add]}, timeout=15,
     )
+    _check(resp, f"issue #{issue_number}: add label '{add}'")
+
     _remove_labels(issue_number, remove)
-    requests.patch(
+
+    resp = requests.patch(
         f"{API_BASE}/issues/{issue_number}",
         headers=HEADERS, json={"state": "closed"}, timeout=15,
     )
+    _check(resp, f"issue #{issue_number}: close issue")
 
 
 def _flag_needs_fix(issue_number: int, reason: str):
-    requests.post(
+    resp = requests.post(
         f"{API_BASE}/issues/{issue_number}/labels",
         headers=HEADERS, json={"labels": ["needs-fix"]}, timeout=15,
     )
+    _check(resp, f"issue #{issue_number}: add label 'needs-fix'")
+
     _remove_labels(issue_number, ["approved", "pending"])
     _comment(issue_number, f"⚠️ Couldn't process this: {reason}\nFix it and re-add the `approved` label.")
 
@@ -197,6 +224,12 @@ def main():
     for number, year_month in to_finalize:
         _close_and_relabel(number, add="synced", remove=["approved", "pending"])
         _comment(number, f"✅ Added to the calendar under **{year_month}**. Thanks for the report!")
+
+    if _write_errors:
+        print(f"\nDone, but with {len(_write_errors)} error(s) while writing to GitHub:")
+        for err in _write_errors:
+            print(f"  - {err}")
+        sys.exit(1)
 
     print("Done.")
 
