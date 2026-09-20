@@ -1,0 +1,34 @@
+Event Horizon — Release Data License
+=====================================
+
+The contents of this directory (all files under /data, including
+past, present and future YYYY-MM.json release files) are licensed
+under the:
+
+    Creative Commons Attribution-NonCommercial-NoDerivatives 4.0
+    International License (CC BY-NC-ND 4.0)
+
+Full legal text: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
+Human-readable summary: https://creativecommons.org/licenses/by-nc-nd/4.0/
+
+In short, this means you ARE free to:
+  - View, read and share this data, in its original, unmodified form
+  - Link to it, cite it, or reference individual entries
+
+...as long as you:
+  - Give appropriate credit to "Event Horizon"
+    (https://bbmane.github.io/event-horizon/) as the source
+
+But you are NOT permitted to, without prior written permission:
+  - Use this data for commercial purposes
+  - Redistribute a modified, remixed, or re-formatted version of
+    this dataset (e.g. re-publishing it as your own calendar, feed,
+    or API, even if some entries are added or changed)
+
+This license covers the DATA only. The code used to collect, merge
+and display this data (found elsewhere in this repository) is
+separately licensed under the GNU Affero General Public License
+v3.0 (AGPLv3) — see /LICENSE in the repository root.
+
+To request permission for uses outside this license, please open
+an issue on the project repository.
