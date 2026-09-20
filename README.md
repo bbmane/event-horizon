@@ -5,7 +5,7 @@
 
 A community-curated calendar for sci-fi and cyberpunk releases. Keep track of upcoming movies, series, anime, games, manga, and albums.
 
-✨ [Explore the Calendar](https://bbmane.github.io/event-horizon/)
+🤖 [Explore the Calendar](https://bbmane.github.io/event-horizon/)
 
 ## What is this?
 
@@ -23,10 +23,9 @@ Found a sci-fi or cyberpunk release that's missing? Adding it to the calendar ta
 
 ## How it works
 
-- Submissions come in as GitHub Issues via the template above.
+- Submissions come in as GitHub Issues, either via the template above or through `submit.html`, which posts to a small serverless function (`vercel/api/submit.js`) that opens the issue on your behalf — no GitHub account needed.
 - Once a moderator approves an issue, an automated workflow (`sync_issues.py` + `merge.py`) folds it into the monthly release files under `/data`.
 - `index.html` reads those files directly and renders the calendar — no backend, no database, just static JSON served through GitHub Pages.
-- `worker/` and `vercel/` hold small serverless helpers used for submission handling; see their own files for details.
 
 ## Project structure
 
@@ -36,8 +35,7 @@ submit.html         lightweight submission form
 merge.py            merges approved releases into the monthly data files
 sync_issues.py       syncs approved GitHub Issues into the merge pipeline
 data/                monthly release data (YYYY-MM.json)
-worker/               Cloudflare Worker helper
-vercel/               Vercel serverless helper
+vercel/               Vercel serverless function powering submit.html
 ```
 
 ## License
@@ -45,5 +43,6 @@ vercel/               Vercel serverless helper
 Code here is open — fork it, remix it, run your own version ([AGPLv3 LICENSE](LICENSE)). <br>
 `/data`, though, is under [CC BY-NC-ND 4.0 LICENSE](data/LICENSE): rebuild your own dataset, don't copy-paste ours.
 
----
-✨ [Explore the Calendar](https://bbmane.github.io/event-horizon/)
+##
+
+<small>Star this repo if you like this project :)</small>
