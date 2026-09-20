@@ -1,6 +1,11 @@
 # Event Horizon
 
+[![Code License: AGPL v3](https://img.shields.io/badge/code%20license-AGPL%20v3-blue.svg)](LICENSE)
+[![Data License: CC BY-NC-ND 4.0](https://img.shields.io/badge/data%20license-CC%20BY--NC--ND%204.0-lightgrey.svg)](data/LICENSE)
+
 A community-curated calendar for sci-fi and cyberpunk releases. Keep track of upcoming movies, series, anime, games, manga, and albums.
+
+✨ [Explore the Calendar](https://bbmane.github.io/event-horizon/)
 
 ## What is this?
 
@@ -15,6 +20,30 @@ Found a sci-fi or cyberpunk release that's missing? Adding it to the calendar ta
 1. Head over to the **[Submit a Release](https://github.com/bbmane/event-horizon/issues/new?template=report-release.yml)** page.
 2. Fill in the title, release date, a link for verification, and select the core sci-fi themes that fit the work.
 3. Once approved, it automatically appears on the calendar!
+
+## How it works
+
+- Submissions come in as GitHub Issues via the template above.
+- Once a moderator approves an issue, an automated workflow (`sync_issues.py` + `merge.py`) folds it into the monthly release files under `/data`.
+- `index.html` reads those files directly and renders the calendar — no backend, no database, just static JSON served through GitHub Pages.
+- `worker/` and `vercel/` hold small serverless helpers used for submission handling; see their own files for details.
+
+## Project structure
+
+```
+index.html          the calendar itself
+submit.html         lightweight submission form
+merge.py            merges approved releases into the monthly data files
+sync_issues.py       syncs approved GitHub Issues into the merge pipeline
+data/                monthly release data (YYYY-MM.json)
+worker/               Cloudflare Worker helper
+vercel/               Vercel serverless helper
+```
+
+## License
+
+Code here is open — fork it, remix it, run your own version ([AGPLv3 LICENSE](LICENSE)). <br>
+`/data`, though, is under [CC BY-NC-ND 4.0 LICENSE](data/LICENSE): rebuild your own dataset, don't copy-paste ours.
 
 ---
 ✨ [Explore the Calendar](https://bbmane.github.io/event-horizon/)
