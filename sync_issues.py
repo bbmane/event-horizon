@@ -9,9 +9,17 @@ owner/repo senza bisogno di hardcodarli.
 
 Dopo il merge, ogni issue processata con successo:
   - riceve un commento di conferma con il periodo in cui è stata inserita
-  - viene chiusa e rietichettata "synced" (così non viene riprocessata)
+  - viene chiusa e rietichettata "synced", rimuovendo "approved" e "pending"
+    (così non viene riprocessata e non resta agganciata alla coda di revisione)
 Le issue con una data non valida vengono invece etichettate "needs-fix"
-e lasciate aperte, con un commento che spiega cosa correggere.
+(con "approved" e "pending" rimosse) e lasciate aperte, con un commento
+che spiega cosa correggere.
+
+Per correggere un'entry già sincronizzata (link morto, data cambiata, ecc.):
+riapri l'issue, correggi i campi nel body e rimetti la label "approved".
+Lo stesso id ("issue-<numero>") farà un merge sull'evento esistente invece
+di duplicarlo; se la data cambia mese, l'evento viene anche spostato dal
+vecchio file mensile a quello nuovo (vedi merge.py).
 """
 import os
 import re
@@ -88,15 +96,22 @@ def _comment(issue_number: int, body: str):
     )
 
 
-def _close_and_relabel(issue_number: int, add: str, remove: str):
+def _remove_labels(issue_number: int, labels: list[str]):
+    """Rimuove ciascuna label passata, ignorando quelle già assenti
+    (l'API risponde 404 in quel caso, che non è un errore per noi)."""
+    for label in labels:
+        requests.delete(
+            f"{API_BASE}/issues/{issue_number}/labels/{label}",
+            headers=HEADERS, timeout=15,
+        )
+
+
+def _close_and_relabel(issue_number: int, add: str, remove: list[str]):
     requests.post(
         f"{API_BASE}/issues/{issue_number}/labels",
         headers=HEADERS, json={"labels": [add]}, timeout=15,
     )
-    requests.delete(
-        f"{API_BASE}/issues/{issue_number}/labels/{remove}",
-        headers=HEADERS, timeout=15,
-    )
+    _remove_labels(issue_number, remove)
     requests.patch(
         f"{API_BASE}/issues/{issue_number}",
         headers=HEADERS, json={"state": "closed"}, timeout=15,
@@ -108,10 +123,7 @@ def _flag_needs_fix(issue_number: int, reason: str):
         f"{API_BASE}/issues/{issue_number}/labels",
         headers=HEADERS, json={"labels": ["needs-fix"]}, timeout=15,
     )
-    requests.delete(
-        f"{API_BASE}/issues/{issue_number}/labels/approved",
-        headers=HEADERS, timeout=15,
-    )
+    _remove_labels(issue_number, ["approved", "pending"])
     _comment(issue_number, f"⚠️ Couldn't process this: {reason}\nFix it and re-add the `approved` label.")
 
 def _parse_tags(body: str) -> list[str]:
@@ -184,7 +196,7 @@ def main():
             print(f"  {year_month}: +{nuovi} new, {aggiornati} updated")
 
     for number, year_month in to_finalize:
-        _close_and_relabel(number, add="synced", remove="approved")
+        _close_and_relabel(number, add="synced", remove=["approved", "pending"])
         _comment(number, f"✅ Added to the calendar under **{year_month}**. Thanks for the report!")
 
     print("Done.")
