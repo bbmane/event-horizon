@@ -1,5 +1,20 @@
 [
   {
+    "id": "issue-8",
+    "type": "manga",
+    "title": "Glitch Witch",
+    "date": "2026-09-09",
+    "source_url": "https://theghostintheshell.jp/en/news/glitch-witch",
+    "tags": [
+      "biopunk-genetic-engineering",
+      "corporate-governments-techno-religions",
+      "cyberpunk",
+      "speculative-tech-cybernetics-ai-robotics",
+      "transhumanism-post-humanism-mind-uploading"
+    ],
+    "image_url": "https://pbs.twimg.com/media/HRtL-2ybQAAy2Ln?format=webp&name=large"
+  },
+  {
     "id": "issue-6",
     "type": "album",
     "title": "Current Value - Hard Light",
