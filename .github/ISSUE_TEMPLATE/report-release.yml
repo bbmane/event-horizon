@@ -21,8 +21,8 @@ body:
     id: date
     attributes:
       label: Release date
-      description: "Format: YYYY-MM-DD. If only the month is known, use the 1st (e.g. 2026-11-01) and say so in the notes."
-      placeholder: "2026-11-15"
+      description: "Format: YYYY-MM-DD. If you only know the month, use the 1st (e.g. 2026-11-01)."
+      placeholder: "2026-11-25"
     validations:
       required: true
 
@@ -30,7 +30,7 @@ body:
     id: url
     attributes:
       label: Source link
-      description: "Official page, store listing, AniList/Steam/MangaDex/IMDb entry, trailer, announcement - anything that backs this up."
+      description: "Official page, store listing, AniList/Steam/MangaDex/IMDb, trailer, announcement."
       placeholder: "https://..."
     validations:
       required: true
