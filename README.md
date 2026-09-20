@@ -5,7 +5,7 @@
 
 A community-curated calendar for sci-fi and cyberpunk releases. Keep track of upcoming movies, series, anime, games, manga, and albums.
 
-🤖 [Explore the Calendar](https://bbmane.github.io/event-horizon/)
+🤖 [Explore Event Horizon](https://bbmane.github.io/event-horizon/)
 
 ## What is this?
 
@@ -45,4 +45,4 @@ Code here is open — fork it, remix it, run your own version ([AGPLv3 LICENSE](
 
 ##
 
-<small>Star this repo if you like this project :)</small>
+<sub>Star this repo if you like the project :)</sub>
