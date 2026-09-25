@@ -193,6 +193,21 @@
   fieldset.invalid .field-error {
     display: block;
   }
+
+  .link-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  
+  .guidelines-link {
+    color: var(--accent-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px dotted var(--accent-dim);
+  }
+  .guidelines-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  
 </style>
 <script>
   let showUnderscore = true;
@@ -210,7 +225,10 @@
     <span class="prompt">add a release to the calendar</span>
   </div>
 
-  <a class="back-link" href="index.html">&larr; back to calendar</a>
+  <div class="link-row">
+    <a class="back-link" href="index.html">&larr; back to calendar</a>
+    <a class="guidelines-link" href="https://github.com/bbmane/event-horizon/wiki/Submission-Guidelines" target="_blank" rel="noopener">submission guidelines</a>
+  </div>
 
   <form id="releaseForm" novalidate>
     <!-- honeypot field, must stay empty -->
