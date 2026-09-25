@@ -62,18 +62,5 @@
       "post-apocalyptic-alternative-histories"
     ],
     "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coc64f.jpg"
-  },
-  {
-    "id": "issue-2",
-    "type": "game",
-    "title": "Nivalis Nights",
-    "date": "2026-09-29",
-    "source_url": "https://store.steampowered.com/app/1488490/Nivalis_Nights/",
-    "tags": [
-      "cyberpunk",
-      "post-apocalyptic-alternative-histories",
-      "speculative-tech-cybernetics-ai-robotics"
-    ],
-    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocc6d.jpg"
   }
 ]
