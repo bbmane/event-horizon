@@ -23,6 +23,8 @@ Found a sci-fi or cyberpunk release that's missing? Adding it to the calendar ta
 
 Spotted a mistake on an entry that's already on the calendar (dead link, wrong date, wrong tags)? Use **[Report a Correction](https://github.com/bbmane/event-horizon/issues/new?template=report-correction.yml)** instead — a moderator will pick it up and fix the original entry.
 
+Not sure whether something counts as a new release — a remaster, a new season, which date to use for a manga or series? Check the **[Submission Guidelines](https://github.com/bbmane/event-horizon/wiki/Submission-Guidelines)** wiki page before you submit.
+
 ## How it works
 
 - Submissions come in as GitHub Issues, either via the template above or through `submit.html`, which posts to a small serverless function (`vercel/api/submit.js`) that opens the issue on your behalf — no GitHub account needed.
