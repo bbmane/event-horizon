@@ -498,7 +498,10 @@
   window.addEventListener('scroll', hideImgPreview, { passive: true });
 
   function isToday(dateStr) {
-    return dateStr === TODAY.toISOString().slice(0, 10);
+    const y = TODAY.getFullYear();
+    const m = String(TODAY.getMonth() + 1).padStart(2, '0');
+    const d = String(TODAY.getDate()).padStart(2, '0');
+    return dateStr === `${y}-${m}-${d}`;
   }
 
   function isPast(dateStr) {
