@@ -240,8 +240,26 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 0.6rem 1rem;
     margin-bottom: 1rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--border);
+  }
+
+  .filter-label {
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--text-dim);
+    opacity: 0.7;
   }
 
   .type-filters {
@@ -251,24 +269,39 @@
 
   .filter-btn {
     background: none;
-    border: 1px solid var(--border);
+    border: 1px solid transparent;
     color: var(--text-dim);
     font-family: inherit;
     font-size: 1rem;
     line-height: 1;
     padding: 0.4rem 0.55rem;
     cursor: pointer;
-    opacity: 0.4;
-    transition: opacity 0.15s ease, border-color 0.15s ease;
+    opacity: 0.45;
+    transition: opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease;
   }
 
   .filter-btn.active {
     opacity: 1;
+    background: var(--accent-faint);
     border-color: var(--accent-dim);
   }
 
-  .filter-btn:hover { border-color: var(--accent-dim); }
+  .filter-btn:hover { border-color: var(--accent-dim); opacity: 0.8; }
+  .filter-btn.active:hover { opacity: 1; }
   .filter-btn:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+
+  .filter-count {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    opacity: 0.8;
+  }
+
+  .filter-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
 
   .tag-toggle,
   .clear-filters {
@@ -286,7 +319,7 @@
   .clear-filters:hover { border-color: var(--accent-dim); color: var(--accent); }
   .tag-toggle.has-selection { border-color: var(--accent-dim); color: var(--accent); }
 
-  .clear-filters { color: var(--accent-dim); margin-left: auto; }
+  .clear-filters { color: var(--accent-dim); }
 
   .tag-panel {
     display: flex;
@@ -369,9 +402,15 @@
   </div>
 
   <div class="filters">
-    <div class="type-filters" id="typeFilters"></div>
-    <button class="tag-toggle" id="tagToggle" aria-expanded="false">tags ▾</button>
-    <button class="clear-filters" id="clearFilters" hidden>clear ×</button>
+    <div class="filter-group">
+      <span class="filter-label">type</span>
+      <div class="type-filters" id="typeFilters"></div>
+    </div>
+    <span class="filter-count" id="filterCount"></span>
+    <div class="filter-actions">
+      <button class="tag-toggle" id="tagToggle" aria-expanded="false">tags ▾</button>
+      <button class="clear-filters" id="clearFilters" hidden>clear ×</button>
+    </div>
   </div>
 
   <div class="tag-panel" id="tagPanel" hidden></div>
@@ -625,6 +664,7 @@
   const tagPanelEl = document.getElementById('tagPanel');
   const tagToggleEl = document.getElementById('tagToggle');
   const clearFiltersEl = document.getElementById('clearFilters');
+  const filterCountEl = document.getElementById('filterCount');
 
   for (const [type, icon] of Object.entries(ICONS)) {
     const btn = document.createElement('button');
@@ -724,7 +764,14 @@
   }
 
   function renderFiltered() {
-    render(applyFilters(currentEvents));
+    const filtered = applyFilters(currentEvents);
+    updateFilterCount(filtered.length, currentEvents.length);
+    render(filtered);
+  }
+
+  function updateFilterCount(shown, total) {
+    const isFiltering = shown !== total;
+    filterCountEl.textContent = isFiltering ? `${shown}/${total}` : '';
   }
 
   async function refresh() {
