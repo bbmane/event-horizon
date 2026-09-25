@@ -1,0 +1,56 @@
+name: "Report a correction"
+description: "Report an error in a release that's already on the calendar (dead link, wrong date, wrong tags, etc.)."
+title: "[Correction] "
+labels: ["correction"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this form to report a problem with a release **already published** on the calendar.
+        This won't be processed automatically: a moderator will review it, reopen the original
+        release issue, fix the data there, and re-approve it.
+
+        To submit a **new** release instead, use the "Submit a release" template.
+
+  - type: input
+    id: entry
+    attributes:
+      label: Release to correct
+      description: "Title of the entry on the calendar, and if possible a direct link (e.g. to the original [Release] issue, or the calendar page)."
+      placeholder: "Cyberpunk: Edgerunners [SEASON 2] — https://github.com/bbmane/event-horizon/issues/..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: field
+    attributes:
+      label: What's wrong
+      multiple: true
+      options:
+        - Title
+        - Release date
+        - Source link (dead or wrong)
+        - Image (broken or wrong)
+        - Tags / themes
+        - Type (movie, series, anime, etc.)
+        - Other (specify below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: "What's wrong and, if you know it, what the correct value should be. The more context, the faster the fix."
+      placeholder: "Release date changed from 2026-11-25 to 2027-01-15, source: https://..."
+    validations:
+      required: true
+
+  - type: input
+    id: source
+    attributes:
+      label: Supporting source (optional)
+      description: "A link confirming the correct value, if you have one."
+      placeholder: "https://..."
+    validations:
+      required: false
