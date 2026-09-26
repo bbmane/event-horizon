@@ -1,0 +1,25 @@
+name: Check tags sync
+
+on:
+  pull_request:
+    paths:
+      - "data/tags.json"
+      - ".github/ISSUE_TEMPLATE/report-release.yml"
+  push:
+    branches: [main]
+    paths:
+      - "data/tags.json"
+      - ".github/ISSUE_TEMPLATE/report-release.yml"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check tags.json vs template
+        run: python tools/check_tags_sync.py
