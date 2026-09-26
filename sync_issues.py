@@ -15,6 +15,15 @@ Le issue con una data non valida vengono invece etichettate "needs-fix"
 (con "approved" e "pending" rimosse) e lasciate aperte, con un commento
 che spiega cosa correggere.
 
+Release senza una data ancora annunciata: il campo "Release date" del
+template è opzionale, quindi una issue può restare aperta con label
+"pending" a tempo indefinito, in attesa che qualcuno sappia la data - non
+viene mai letta da questo script finché non riceve "approved". Se invece
+capita che un moderatore approvi per errore una issue ancora senza data,
+questo script la rifiuta subito con "needs-fix" invece di lasciarla
+avanzare nella pipeline, esattamente come farebbe con una data scritta
+in modo invalido.
+
 Per correggere un'entry già sincronizzata (link morto, data cambiata, ecc.):
 riapri l'issue, correggi i campi nel body e rimetti la label "approved".
 Lo stesso id ("issue-<numero>") farà un merge sull'evento esistente invece
@@ -190,6 +199,18 @@ def main():
             continue
 
         date_str = fields.get("release date", "").strip()
+        if not date_str:
+            # Il campo è opzionale in submission, quindi una issue può restare
+            # "pending" a tempo indefinito senza mai arrivare qui. Se invece è
+            # stata approvata per sbaglio prima che la data fosse nota, la
+            # rispediamo indietro invece di farla proseguire nella pipeline.
+            _flag_needs_fix(
+                number,
+                "missing release date. This entry stays open until a date is "
+                "announced - add it to the issue body and re-apply the "
+                "`approved` label once you know it.",
+            )
+            continue
         try:
             date.fromisoformat(date_str)
         except ValueError:
