@@ -29,7 +29,13 @@ riapri l'issue, correggi i campi nel body e rimetti la label "approved".
 Lo stesso id ("issue-<numero>") farà un merge sull'evento esistente invece
 di duplicarlo; se la data cambia mese, l'evento viene anche spostato dal
 vecchio file mensile a quello nuovo (vedi merge.py).
+
+I tag sono salvati come id numerici (non più come slug testuali): la
+mappa nome-tag -> id vive in data/tags.json, fonte unica condivisa con
+index.html, submit.html e le function di submission. Rinominare un tag lì
+aggiorna automaticamente tutte le release, passate e future, che lo usano.
 """
+import json
 import os
 import re
 import sys
@@ -47,6 +53,8 @@ HEADERS = {
     "Authorization": f"Bearer {GITHUB_TOKEN}",
     "Accept": "application/vnd.github+json",
 }
+
+TAGS_FILE = os.path.join(os.path.dirname(__file__), "data", "tags.json")
 
 # Raccoglie i problemi incontrati mentre si scrive su GitHub (label, commenti,
 # chiusura issue). Non blocchiamo l'elaborazione delle altre issue per un
@@ -74,6 +82,15 @@ TYPE_MAP = {
     "book": "book",
     "album": "album",
 }
+
+
+def _load_tag_label_map() -> dict:
+    """Ritorna {testo esatto della label: id} per ogni tag in data/tags.json
+    (compresi quelli con "active": false, per continuare a riconoscere una
+    label ritirata se compare in una vecchia issue riaperta)."""
+    with open(TAGS_FILE, "r", encoding="utf-8") as f:
+        tags = json.load(f)
+    return {t["label"]: t["id"] for t in tags}
 
 
 def _fetch_approved_issues() -> list[dict]:
@@ -163,25 +180,29 @@ def _flag_needs_fix(issue_number: int, reason: str):
     _remove_labels(issue_number, ["approved", "pending"])
     _comment(issue_number, f"⚠️ Couldn't process this: {reason}\nFix it and re-add the `approved` label.")
 
-def _parse_tags(body: str) -> list[str]:
-    tags = []
+def _parse_tags(body: str, label_to_id: dict) -> tuple[list[int], list[str]]:
+    """Estrae i tag selezionati nel body dell'issue e li risolve in id usando
+    data/tags.json. Ritorna (ids, unrecognized): unrecognized contiene il
+    testo esatto di ogni checkbox selezionata che non corrisponde a nessuna
+    label conosciuta - il caso più comune è il template GitHub e
+    data/tags.json finiti disallineati (vedi tools/check_tags_sync.py)."""
+    ids = []
+    unrecognized = []
     match = re.search(r"### Sci-Fi Tags & Themes\n+(.+?)(?=\n### |\Z)", body, re.S)
     if match:
         lines = match.group(1).strip().split("\n")
         for line in lines:
             if line.strip().startswith("- [x]"):
                 tag_text = line.replace("- [x]", "").strip()
-                clean_name = tag_text.split(" (")[0]
-                slug = (
-                    clean_name.lower()
-                    .replace(" & ", "-")
-                    .replace(", ", "-")
-                    .replace(" ", "-")
-                )
-                tags.append(slug)
-    return tags
+                if tag_text in label_to_id:
+                    ids.append(label_to_id[tag_text])
+                else:
+                    unrecognized.append(tag_text)
+    return ids, unrecognized
 
 def main():
+    label_to_id = _load_tag_label_map()
+
     issues = _fetch_approved_issues()
     print(f"Found {len(issues)} approved issue(s) to process.")
 
@@ -190,7 +211,8 @@ def main():
 
     for issue in issues:
         number = issue["number"]
-        fields = _parse_form_body(issue.get("body") or "")
+        body = issue.get("body") or ""
+        fields = _parse_form_body(body)
 
         raw_type = fields.get("type", "").strip().lower()
         event_type = TYPE_MAP.get(raw_type)
@@ -222,7 +244,17 @@ def main():
             _flag_needs_fix(number, "missing source link.")
             continue
 
-        selected_tags = _parse_tags(issue.get("body") or "")
+        selected_tags, unrecognized_tags = _parse_tags(body, label_to_id)
+        if unrecognized_tags:
+            listed = ", ".join(f"'{t}'" for t in unrecognized_tags)
+            _flag_needs_fix(
+                number,
+                f"tag(s) {listed} don't match any known tag in data/tags.json. "
+                "This usually means the issue template and data/tags.json are "
+                "out of sync - fix the mismatch, then re-select the tags and "
+                "re-add the `approved` label.",
+            )
+            continue
 
         event = {
             "id": f"issue-{number}",
