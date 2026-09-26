@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
+  <meta property="og:title" content="Event Horizon — sci-fi & cyberpunk release calendar">
+<meta property="og:description" content="A community-curated calendar for sci-fi and cyberpunk movies, series, anime, games, manga, and albums.">
+<!-- <meta property="og:image" content="https://bbmane.github.io/event-horizon/path/to/some-image.png"> -->
+<meta property="og:url" content="https://bbmane.github.io/event-horizon/">
+<meta name="twitter:card" content="summary_large_image">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
@@ -61,8 +66,13 @@
     }
 
     .header .prompt {
-      font-size: 0.78rem;
-      line-height: 1.3;
+      color: var(--accent-dim);
+      font-size: 0.9rem;
+      text-decoration: none;
+    }
+
+    .header .prompt:hover {
+      color: var(--accent);
     }
 
     .filters {
@@ -402,6 +412,9 @@
     color: var(--text-dim);
     font-size: 0.75rem;
     line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
   }
 
   .footer-note a {
@@ -433,7 +446,7 @@
 
   <div class="header">
     <h1>releases.log</h1>
-    <span class="prompt">hype-sharing, community-based sci-fi cyber-feed</span>
+    <a href="https://github.com/bbmane/event-horizon" target="_blank" rel="noopener" class="prompt">hype-sharing, community-based sci-fi cyber-feed</a>
   </div>
 
   <div class="filters">
@@ -459,9 +472,11 @@
   <div id="calendar"></div>
 
   <div class="footer-note">
-    type → icon: game 🎮 · anime 📺 · movie 🎬 · series 📼 · manga 📖 · album 💽
-    · <a href="submit.html">submit a missing release</a>
-    · <a href="https://github.com/bbmane/event-horizon/issues/new?template=report-correction.yml" target="_blank" rel="noopener">report a correction</a>
+    <div>type icons: game 🎮 · anime 📺 · movie 🎬 · series 📼 · manga 📖 · album 💽</div>
+    <div>
+      contribute: <a href="submit.html">submit a missing release</a>
+      · <a href="https://github.com/bbmane/event-horizon/issues/new?template=report-correction.yml" target="_blank" rel="noopener">report a correction</a>
+    </div>
   </div>
 
 </div>
