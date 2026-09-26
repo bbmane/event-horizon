@@ -8,31 +8,45 @@
  *   GITHUB_TOKEN   - fine-grained PAT, permesso "Issues: write" SOLO sul repo target
  *   GITHUB_OWNER   - es. "bbmane"
  *   GITHUB_REPO    - es. "event-horizon"
+ *   GITHUB_BRANCH  - opzionale, default "main" (branch da cui leggere data/tags.json)
  *   ALLOWED_ORIGIN - es. "https://bbmane.github.io"  (per il CORS)
  */
 
 const VALID_TYPES = ["Movie", "TV Series", "Anime", "Video Game", "Manga", "Comic", "Book", "Album"];
-const VALID_TAGS = new Set([
-  "Aliens & First Contact",
-  "Biopunk & Genetic Engineering",
-  "Corporate Governments & Techno-Religions",
-  "Cyberpunk",
-  "Dystopian",
-  "Hard Sci-Fi",
-  "Kaiju & Tokusatsu",
-  "Mecha",
-  "Megastructures (Dyson spheres, orbital cities)",
-  "Mind Control, Collective Consciousness & Telepathy",
-  "Post-Apocalyptic & Alternative Histories",
-  "Space Opera & Interplanetary Warfare",
-  "Speculative Tech, Cybernetics, AI & Robotics",
-  "Steampunk & Retrofuturism",
-  "Time Travel & Space Exploration",
-  "Transhumanism, Post-humanism & Mind Uploading",
-  "Virtual Realities, Simulation & Multiverses",
-]);
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
-const MAX_LEN = { title: 150, url: 500, image: 500, tag: 80 };
+const MAX_LEN = { title: 150, url: 500, image: 500 };
+
+// I tag vivono in data/tags.json nel repo (fonte unica, condivisa con
+// index.html/submit.html e con sync_issues.py): li leggiamo da lì invece di
+// tenerne una copia qui, così rinominare/aggiungere un tag non richiede un
+// redeploy di questa function. Cache in memoria per pochi minuti, per non
+// interrogare GitHub ad ogni singola submission.
+const TAGS_TTL_MS = 5 * 60 * 1000;
+let tagsCache = { byId: null, fetchedAt: 0 };
+
+async function getActiveTagLabelsById() {
+  const now = Date.now();
+  if (tagsCache.byId && now - tagsCache.fetchedAt < TAGS_TTL_MS) {
+    return tagsCache.byId;
+  }
+
+  const branch = process.env.GITHUB_BRANCH || "main";
+  const url = `https://raw.githubusercontent.com/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/${branch}/data/tags.json`;
+  const resp = await fetch(url);
+  if (!resp.ok) {
+    throw new Error(`Could not load tags.json: HTTP ${resp.status}`);
+  }
+  const tags = await resp.json();
+
+  const byId = new Map();
+  for (const tag of tags) {
+    if (tag.active === false) continue;
+    byId.set(tag.id, tag.label);
+  }
+
+  tagsCache = { byId, fetchedAt: now };
+  return byId;
+}
 
 function isHttpUrl(value) {
   try {
@@ -43,8 +57,8 @@ function isHttpUrl(value) {
   }
 }
 
-function buildIssueBody({ type, date, url, image, tags }) {
-  const tagLines = tags.map((t) => `- [x] ${t}`).join("\n");
+function buildIssueBody({ type, date, url, image, tagLabels }) {
+  const tagLines = tagLabels.map((t) => `- [x] ${t}`).join("\n");
 
   return [
     "### Type",
@@ -103,7 +117,7 @@ export default async function handler(req, res) {
   const date = (payload.date || "").trim();
   const url = (payload.url || "").trim();
   const image = (payload.image || "").trim();
-  const tags = Array.isArray(payload.tags) ? payload.tags.slice(0, 20) : [];
+  const rawTags = Array.isArray(payload.tags) ? payload.tags.slice(0, 20) : [];
 
   if (!title || title.length > MAX_LEN.title) {
     res.status(400).json({ ok: false, error: "Missing or overly long title." });
@@ -128,14 +142,26 @@ export default async function handler(req, res) {
     res.status(400).json({ ok: false, error: "Invalid image URL." });
     return;
   }
-  for (const t of tags) {
-    if (typeof t !== "string" || !VALID_TAGS.has(t)) {
+  let tagLabelsById;
+  try {
+    tagLabelsById = await getActiveTagLabelsById();
+  } catch (err) {
+    console.error("Tags fetch error", err);
+    res.status(502).json({ ok: false, error: "Error loading the tag list, please try again later." });
+    return;
+  }
+
+  const tagLabels = [];
+  for (const t of rawTags) {
+    const id = Number(t);
+    if (!Number.isInteger(id) || !tagLabelsById.has(id)) {
       res.status(400).json({ ok: false, error: "Invalid tag." });
       return;
     }
+    tagLabels.push(tagLabelsById.get(id));
   }
 
-  const issueBody = buildIssueBody({ type, date, url, image, tags });
+  const issueBody = buildIssueBody({ type, date, url, image, tagLabels });
 
   const ghResp = await fetch(
     `https://api.github.com/repos/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/issues`,
