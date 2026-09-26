@@ -13,6 +13,8 @@ body:
         - Anime
         - Video Game
         - Manga
+        - Comic
+        - Book
         - Album
     validations:
       required: true
