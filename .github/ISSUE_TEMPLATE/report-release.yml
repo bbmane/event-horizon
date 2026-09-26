@@ -23,10 +23,10 @@ body:
     id: date
     attributes:
       label: Release date
-      description: "Format: YYYY-MM-DD. If you only know the month, use the 1st (e.g. 2026-11-01)."
+      description: "Format: YYYY-MM-DD. If you only know the month, use the 1st (e.g. 2026-11-01). If no date has been announced yet, leave this blank — a moderator will add it and approve the entry once one is confirmed."
       placeholder: "2026-11-25"
     validations:
-      required: true
+      required: false
 
   - type: input
     id: url
