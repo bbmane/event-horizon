@@ -41,6 +41,7 @@ submit.html                                  lightweight submission form
 merge.py                                     merges approved releases into the monthly data files
 sync_issues.py                               syncs approved GitHub Issues into the merge pipeline
 guard_labels.py                              reverts "approved" mistakenly applied outside [Release] issues
+guard_title.py                               restores the "[Release]"/"[Correction]" title prefix if removed
 data/                                        monthly release data (YYYY-MM.json)
 vercel/                                      Vercel serverless function powering submit.html
 .github/ISSUE_TEMPLATE/report-release.yml    "Submit a release" issue template
