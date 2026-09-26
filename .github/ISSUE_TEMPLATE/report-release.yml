@@ -3,6 +3,13 @@ description: "Suggest a sci-fi / cyberpunk movie, series, anime, game, manga, or
 title: "[Release]"
 labels: ["pending"]
 body:
+  - type: markdown
+    attributes:
+      value: |
+        Don't remove the `[Release]` prefix from the title above — it's not
+        a placeholder, it's how the sync pipeline recognizes this as a new
+        release submission. Just add your title after it.
+
   - type: dropdown
     id: type
     attributes:
