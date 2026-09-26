@@ -45,8 +45,8 @@
     align-items: baseline;
     justify-content: space-between;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 1.2rem;
-    margin-bottom: 2.2rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
   }
 
   .header .prompt { color: var(--accent-dim); font-size: 0.9rem; }
@@ -63,7 +63,6 @@
 
   .back-link {
     display: inline-block;
-    margin-bottom: 1.5rem;
     color: var(--accent-dim);
     text-decoration: none;
     font-size: 0.9rem;
@@ -201,15 +200,31 @@
 
   .link-row {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: baseline;
+    gap: 0.4rem 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed var(--border);
   }
-  
+
+  .link-group {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+  }
+
+  .link-group .sep {
+    color: var(--text-hint);
+  }
+
   .guidelines-link {
     color: var(--accent-dim);
     text-decoration: none;
     font-size: 0.9rem;
     border-bottom: 1px dotted var(--accent-dim);
+    white-space: nowrap;
   }
   .guidelines-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
   
@@ -232,7 +247,11 @@
 
   <div class="link-row">
     <a class="back-link" href="index.html">&larr; back to calendar</a>
-    <a class="guidelines-link" href="https://github.com/bbmane/event-horizon/wiki/Submission-Guidelines" target="_blank" rel="noopener">submission guidelines</a>
+    <span class="link-group">
+      <a class="guidelines-link" href="https://github.com/bbmane/event-horizon/issues?q=%5BRelease%5D" target="_blank" rel="noopener">already requested?</a>
+      <span class="sep">·</span>
+      <a class="guidelines-link" href="https://github.com/bbmane/event-horizon/wiki/Submission-Guidelines" target="_blank" rel="noopener">submission guidelines</a>
+    </span>
   </div>
 
   <form id="releaseForm" novalidate>
