@@ -9,9 +9,13 @@ A community-curated calendar for sci-fi and cyberpunk releases. Keep track of up
 
 ## What is this?
 
-`Event Horizon` is a shared space for enthusiasts to collect and discover upcoming sci-fi and cyberpunk media. Whether it's a new dystopian game, a cyberpunk anime, or a hard sci-fi book adaptation, this calendar helps you stay up to date.
+`Event Horizon` is a shared space for enthusiasts to discover upcoming sci-fi and cyberpunk media. Whether it's a new dystopian game, a cyberpunk anime, or a hard sci-fi book adaptation, this calendar helps you stay up to date.
 
-The entire schedule is built and maintained directly by the community.
+Filters by type and tags help you showing specific medias and tropes you're looking for, while also allowing you to discover new ones.
+
+<p align="left">
+  <img src="https://i.imgur.com/fqCAJ2i.gif" width="70%">
+</p>
 
 ## How to Contribute
 
@@ -53,7 +57,7 @@ vercel/                                      Vercel serverless function powering
 
 ## License
 
-Code here is open — fork it, remix it, run your own version ([LICENSE](LICENSE)) but keep it open source. <br>
+Code here is open — fork it, remix it, run your own version ([LICENSE](LICENSE)) but keep it open. <br>
 `/data`, though, is under [CC LICENSE](data/LICENSE): rebuild your own dataset, don't copy-paste ours.
 
 ##
