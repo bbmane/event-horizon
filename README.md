@@ -5,7 +5,7 @@
 
 **Never miss a sci-fi or cyberpunk release again.**
 
-Event Horizon is a community-curated calendar of upcoming movies, series, anime, games, manga, books and albums — built by fans, for fans, with no ads, no tracking, and no algorithm deciding what you should care about.
+Event Horizon is a community-curated calendar of upcoming sci-fi releases — built by fans, for fans, with no ads, no tracking, and no algorithm deciding what you should care about.
 
 🤖 [Explore Event Horizon](https://bbmane.github.io/event-horizon/)
 
