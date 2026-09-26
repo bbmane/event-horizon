@@ -1,5 +1,16 @@
 [
   {
+    "id": "issue-15",
+    "type": "series",
+    "title": "Bass X Machina",
+    "date": "2026-11-03",
+    "source_url": "https://www.imdb.com/it/title/tt39957390/",
+    "tags": [
+      "steampunk-retrofuturism"
+    ],
+    "image_url": "https://www.themoviedb.org/t/p/w600_and_h900_face/y9c1AwrldWRsY9edSf21cOgbI0h.jpg"
+  },
+  {
     "id": "issue-12",
     "type": "series",
     "title": "Blade Runner 2099",
@@ -13,5 +24,18 @@
       "transhumanism-post-humanism-mind-uploading"
     ],
     "image_url": "https://www.themoviedb.org/t/p/w600_and_h900_face/hr5aLuCdLC5X423c9G1pPkWR6Ud.jpg"
+  },
+  {
+    "id": "issue-13",
+    "type": "anime",
+    "title": "Fool Night",
+    "date": "2026-11-26",
+    "source_url": "https://www.imdb.com/it/title/tt43613803/",
+    "tags": [
+      "biopunk-genetic-engineering",
+      "dystopian",
+      "post-apocalyptic-alternative-histories"
+    ],
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx213457-gN5p1GZjK3zi.jpg"
   }
 ]
