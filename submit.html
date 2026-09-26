@@ -332,33 +332,35 @@
   // const WORKER_URL = 'https://event-horizon-bbmane.vercel.app/api/submit';
   const WORKER_URL = 'https://event-horizon-ecru-psi.vercel.app/api/submit';
 
-  const TAGS = [
-    'Aliens & First Contact',
-    'Biopunk & Genetic Engineering',
-    'Corporate Governments & Techno-Religions',
-    'Cyberpunk',
-    'Dystopian',
-    'Hard Sci-Fi',
-    'Kaiju & Tokusatsu',
-    'Mecha',
-    'Megastructures (Dyson spheres, orbital cities)',
-    'Mind Control, Collective Consciousness & Telepathy',
-    'Post-Apocalyptic & Alternative Histories',
-    'Space Opera & Interplanetary Warfare',
-    'Speculative Tech, Cybernetics, AI & Robotics',
-    'Steampunk & Retrofuturism',
-    'Time Travel & Space Exploration',
-    'Transhumanism, Post-humanism & Mind Uploading',
-    'Virtual Realities, Simulation & Multiverses',
-  ];
-
+  // I tag vivono in data/tags.json (fonte unica, condivisa con index.html e
+  // con la validazione server-side): qui costruiamo le checkbox a partire da
+  // lì invece di tenerne una copia hardcoded.
   const grid = document.getElementById('tagsGrid');
-  TAGS.forEach((tag, i) => {
-    const id = `tag_${i}`;
-    const label = document.createElement('label');
-    label.innerHTML = `<input type="checkbox" id="${id}" name="tags" value="${tag}"> ${tag}`;
-    grid.appendChild(label);
-  });
+
+  async function loadTags() {
+    try {
+      const resp = await fetch('data/tags.json', { cache: 'no-cache' });
+      if (!resp.ok) return [];
+      return await resp.json();
+    } catch (err) {
+      console.warn('Could not load data/tags.json', err);
+      return [];
+    }
+  }
+
+  function buildTagCheckboxes(tags) {
+    for (const tag of tags) {
+      if (tag.active === false) continue; // ritirato: non riproponibile in una submission nuova
+      const id = `tag_${tag.id}`;
+      const label = document.createElement('label');
+      label.innerHTML = `<input type="checkbox" id="${id}" name="tags" value="${tag.id}"> ${tag.label}`;
+      grid.appendChild(label);
+    }
+  }
+
+  (async () => {
+    buildTagCheckboxes(await loadTags());
+  })();
 
   const form = document.getElementById('releaseForm');
   const statusEl = document.getElementById('status');
@@ -454,7 +456,7 @@
       date: data.get('date'), // may be empty: release date is optional
       url: data.get('url').trim(),
       image: data.get('image').trim(),
-      tags: data.getAll('tags'),
+      tags: data.getAll('tags').map(Number),
       website: data.get('website'), // honeypot, should be empty
     };
 
