@@ -505,45 +505,12 @@
     return `${year}-${String(month + 1).padStart(2, '0')}`;
   }
 
-  const TAG_LABELS_SOURCE = [
-    'Aliens & First Contact',
-    'Biopunk & Genetic Engineering',
-    'Corporate Governments & Techno-Religions',
-    'Cyberpunk',
-    'Dystopian',
-    'Hard Sci-Fi',
-    'Kaiju & Tokusatsu',
-    'Mecha',
-    'Megastructures (Dyson spheres, orbital cities)',
-    'Mind Control, Collective Consciousness & Telepathy',
-    'Post-Apocalyptic & Alternative Histories',
-    'Space Opera & Interplanetary Warfare',
-    'Speculative Tech, Cybernetics, AI & Robotics',
-    'Steampunk & Retrofuturism',
-    'Time Travel & Space Exploration',
-    'Transhumanism, Post-humanism & Mind Uploading',
-    'Virtual Realities, Simulation & Multiverses',
-  ];
+  // Le label dei tag vivono in data/tags.json, non più hardcoded qui:
+  // rinominare/aggiungere/ritirare un tag si fa in un solo posto (vedi README).
+  const TAGS_BY_ID = new Map();
 
-  function slugify(tagText) {
-    const cleanName = tagText.split(' (')[0];
-    return cleanName
-      .toLowerCase()
-      .replaceAll(' & ', '-')
-      .replaceAll(', ', '-')
-      .replaceAll(' ', '-');
-  }
-
-  const TAG_LABELS = Object.fromEntries(
-    TAG_LABELS_SOURCE.map((t) => [slugify(t), t])
-  );
-
-  function formatTagLabel(slug) {
-    if (TAG_LABELS[slug]) return TAG_LABELS[slug];
-    return slug
-      .split('-')
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
+  function formatTagLabel(id) {
+    return TAGS_BY_ID.get(id) || `Tag #${id}`;
   }
 
   function isSafeHttpUrl(value) {
@@ -616,6 +583,17 @@
       return await resp.json();
     } catch (err) {
       console.warn(`Could not load data/${key}.json`, err);
+      return [];
+    }
+  }
+
+  async function loadTags() {
+    try {
+      const resp = await fetch('data/tags.json', { cache: 'no-cache' });
+      if (!resp.ok) return [];
+      return await resp.json();
+    } catch (err) {
+      console.warn('Could not load data/tags.json', err);
       return [];
     }
   }
@@ -699,10 +677,10 @@
         if (Array.isArray(ev.tags) && ev.tags.length > 0) {
           const tagsRow = document.createElement('div');
           tagsRow.className = 'event-tags';
-          for (const tagSlug of ev.tags) {
+          for (const tagId of ev.tags) {
             const badge = document.createElement('span');
             badge.className = 'tag';
-            badge.textContent = formatTagLabel(tagSlug);
+            badge.textContent = formatTagLabel(tagId);
             tagsRow.appendChild(badge);
           }
           info.appendChild(tagsRow);
@@ -719,7 +697,7 @@
   // --- Filtri ---
   let currentEvents = [];
   const activeTypes = new Set(Object.keys(ICONS));   // tutti i type attivi di default
-  const activeTagSlugs = new Set();                  // nessun tag = nessun filtro sui tag
+  const activeTagIds = new Set();                     // nessun tag = nessun filtro sui tag
 
   const typeFiltersEl = document.getElementById('typeFilters');
   const tagPanelEl = document.getElementById('tagPanel');
@@ -748,24 +726,32 @@
     typeFiltersEl.appendChild(btn);
   }
 
-  for (const [slug, label] of Object.entries(TAG_LABELS)) {
-    const chip = document.createElement('button');
-    chip.className = 'tag-chip';
-    chip.type = 'button';
-    chip.textContent = label;
-    chip.addEventListener('click', () => {
-      if (activeTagSlugs.has(slug)) {
-        activeTagSlugs.delete(slug);
-        chip.classList.remove('active');
-      } else {
-        activeTagSlugs.add(slug);
-        chip.classList.add('active');
-      }
-      updateTagToggleLabel();
-      updateClearVisibility();
-      renderFiltered();
-    });
-    tagPanelEl.appendChild(chip);
+  // Costruisce i chip dei filtri tag a partire da data/tags.json. Un tag con
+  // "active": false resta risolvibile da formatTagLabel (per le release vecchie
+  // che lo usano ancora) ma non compare più come filtro selezionabile.
+  function buildTagFilters(tags) {
+    for (const tag of tags) {
+      TAGS_BY_ID.set(tag.id, tag.label);
+      if (tag.active === false) continue;
+
+      const chip = document.createElement('button');
+      chip.className = 'tag-chip';
+      chip.type = 'button';
+      chip.textContent = tag.label;
+      chip.addEventListener('click', () => {
+        if (activeTagIds.has(tag.id)) {
+          activeTagIds.delete(tag.id);
+          chip.classList.remove('active');
+        } else {
+          activeTagIds.add(tag.id);
+          chip.classList.add('active');
+        }
+        updateTagToggleLabel();
+        updateClearVisibility();
+        renderFiltered();
+      });
+      tagPanelEl.appendChild(chip);
+    }
   }
 
   tagToggleEl.addEventListener('click', (e) => {
@@ -793,7 +779,7 @@
   });
 
   clearFiltersEl.addEventListener('click', () => {
-    activeTagSlugs.clear();
+    activeTagIds.clear();
     for (const type of Object.keys(ICONS)) activeTypes.add(type);
     typeFiltersEl.querySelectorAll('.filter-btn').forEach((b) => b.classList.add('active'));
     tagPanelEl.querySelectorAll('.tag-chip').forEach((c) => c.classList.remove('active'));
@@ -803,22 +789,22 @@
   });
 
   function updateTagToggleLabel() {
-    const n = activeTagSlugs.size;
+    const n = activeTagIds.size;
     tagToggleEl.textContent = n > 0 ? `tags (${n}) ▾` : 'tags ▾';
     tagToggleEl.classList.toggle('has-selection', n > 0);
   }
 
   function updateClearVisibility() {
     const allTypesActive = activeTypes.size === Object.keys(ICONS).length;
-    clearFiltersEl.hidden = allTypesActive && activeTagSlugs.size === 0;
+    clearFiltersEl.hidden = allTypesActive && activeTagIds.size === 0;
   }
 
   function applyFilters(events) {
     return events.filter((ev) => {
       if (!activeTypes.has(ev.type)) return false;
-      if (activeTagSlugs.size > 0) {
+      if (activeTagIds.size > 0) {
         const tags = Array.isArray(ev.tags) ? ev.tags : [];
-        if (!tags.some((t) => activeTagSlugs.has(t))) return false;
+        if (!tags.some((t) => activeTagIds.has(t))) return false;
       }
       return true;
     });
@@ -853,7 +839,10 @@
     refresh();
   });
 
-  refresh();
+  (async () => {
+    buildTagFilters(await loadTags());
+    refresh();
+  })();
 </script>
 </body>
 </html>
