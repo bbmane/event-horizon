@@ -80,6 +80,11 @@
     margin-bottom: 0.4rem;
   }
 
+  .field label .optional-tag {
+    color: var(--text-hint);
+    font-weight: 400;
+  }
+
   .field .hint {
     font-size: 0.75rem;
     color: var(--text-hint);
@@ -260,10 +265,9 @@
     </div>
 
     <div class="field" id="dateField">
-      <label for="date">Release date</label>
-      <input type="date" id="date" name="date" required>
-      <div class="hint">If you only know the month, use the 1st (e.g. 2026-11-01).</div>
-      <div class="field-error">Please enter a valid release date.</div>
+      <label for="date">Release date <span class="optional-tag">(optional)</span></label>
+      <input type="date" id="date" name="date">
+      <div class="hint">If you only know the month, use the 1st (e.g. 2026-11-01). No official date yet? Leave this blank — it'll be added once one is confirmed, and your submission will just wait a bit longer for review.</div>
     </div>
 
     <div class="field" id="urlField">
@@ -350,7 +354,6 @@
   const urlInput = document.getElementById('url');
   const titleField = document.getElementById('titleField');
   const typeField = document.getElementById('typeField');
-  const dateField = document.getElementById('dateField');
   const urlField = document.getElementById('urlField');
   const tagsField = document.getElementById('tagsField');
 
@@ -359,7 +362,9 @@
   }
 
   // Mirrors the required fields of the "Report a release" GitHub issue
-  // template: title, type, date, source link, and at least one tag.
+  // template: title, type, source link, and at least one tag. The release
+  // date is optional on both sides - if it isn't known yet, the issue simply
+  // stays open ("pending") until a moderator adds it once announced.
   function validate() {
     let firstInvalid = null;
     let ok = true;
@@ -373,11 +378,6 @@
     setInvalid(typeField, !typeOk);
     if (!typeOk && !firstInvalid) firstInvalid = typeInput;
     ok = ok && typeOk;
-
-    const dateOk = dateInput.value.trim().length > 0;
-    setInvalid(dateField, !dateOk);
-    if (!dateOk && !firstInvalid) firstInvalid = dateInput;
-    ok = ok && dateOk;
 
     const urlOk = urlInput.checkValidity() && urlInput.value.trim().length > 0;
     setInvalid(urlField, !urlOk);
@@ -394,7 +394,7 @@
   }
 
   // Clear a field's error state as soon as the user fixes it.
-  [titleInput, typeInput, dateInput, urlInput].forEach((el) => {
+  [titleInput, typeInput, urlInput].forEach((el) => {
     el.addEventListener('input', () => setInvalid(el.closest('.field'), false));
   });
   grid.addEventListener('change', () => {
@@ -422,7 +422,7 @@
     const payload = {
       title: data.get('title').trim(),
       type: data.get('type'),
-      date: data.get('date'),
+      date: data.get('date'), // may be empty: release date is optional
       url: data.get('url').trim(),
       image: data.get('image').trim(),
       tags: data.getAll('tags'),
