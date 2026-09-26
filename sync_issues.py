@@ -61,6 +61,8 @@ TYPE_MAP = {
     "anime": "anime",
     "video game": "game",
     "manga": "manga",
+    "comic": "comic",
+    "book": "book",
     "album": "album",
 }
 
