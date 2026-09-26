@@ -51,7 +51,12 @@ function buildIssueBody({ type, date, url, image, tags }) {
     type,
     "",
     "### Release date",
-    date,
+    // Campo opzionale: se non è stata ancora annunciata una data, usiamo lo
+    // stesso placeholder "_No response_" che genera GitHub Issue Forms per
+    // un campo facoltativo lasciato vuoto, così sync_issues.py (che già lo
+    // riconosce per il campo immagine) lo interpreta correttamente e lascia
+    // l'issue in sospeso finché un moderatore non aggiunge la data.
+    date || "_No response_",
     "",
     "### Source link",
     url,
@@ -108,8 +113,11 @@ export default async function handler(req, res) {
     res.status(400).json({ ok: false, error: "Invalid type." });
     return;
   }
-  if (!DATE_RE.test(date) || Number.isNaN(new Date(date).getTime())) {
-    res.status(400).json({ ok: false, error: "Invalid date, use YYYY-MM-DD." });
+  // La data è opzionale: se manca un annuncio ufficiale, la issue resta
+  // "pending" finché qualcuno non la conosce. Se invece è stata inserita,
+  // deve comunque essere una data valida in formato YYYY-MM-DD.
+  if (date && (!DATE_RE.test(date) || Number.isNaN(new Date(date).getTime()))) {
+    res.status(400).json({ ok: false, error: "Invalid date, use YYYY-MM-DD (or leave it blank if unannounced)." });
     return;
   }
   if (!isHttpUrl(url) || url.length > MAX_LEN.url) {
