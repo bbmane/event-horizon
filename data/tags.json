@@ -1,0 +1,21 @@
+[
+  { "id": 1, "label": "Aliens & First Contact", "active": true },
+  { "id": 2, "label": "Biopunk & Genetic Engineering", "active": true },
+  { "id": 3, "label": "Corporate Governments & Techno-Religions", "active": true },
+  { "id": 4, "label": "Cyberpunk", "active": true },
+  { "id": 5, "label": "Dystopian", "active": true },
+  { "id": 6, "label": "Hard Sci-Fi", "active": true },
+  { "id": 7, "label": "Kaiju & Tokusatsu", "active": true },
+  { "id": 8, "label": "Mecha", "active": true },
+  { "id": 9, "label": "Megastructures (Dyson spheres, orbital cities)", "active": true },
+  { "id": 10, "label": "Mind Control, Collective Consciousness & Telepathy", "active": true },
+  { "id": 19, "label": "Multiverses", "active": true },
+  { "id": 11, "label": "Post-Apocalyptic & Alternative Histories", "active": true },
+  { "id": 18, "label": "Space Exploration", "active": true },
+  { "id": 12, "label": "Space Opera & Interplanetary Warfare", "active": true },
+  { "id": 13, "label": "Speculative Tech, Cybernetics, AI & Robotics", "active": true },
+  { "id": 14, "label": "Steampunk & Retrofuturism", "active": true },
+  { "id": 15, "label": "Time Travel", "active": true },
+  { "id": 16, "label": "Transhumanism, Post-humanism & Mind Uploading", "active": true },
+  { "id": 17, "label": "Virtual Realities & Simulation", "active": true }
+]
