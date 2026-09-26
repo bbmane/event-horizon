@@ -11,7 +11,7 @@
  *   ALLOWED_ORIGIN - es. "https://bbmane.github.io"  (per il CORS)
  */
 
-const VALID_TYPES = ["Movie", "TV Series", "Anime", "Video Game", "Manga", "Album"];
+const VALID_TYPES = ["Movie", "TV Series", "Anime", "Video Game", "Manga", "Comic", "Book", "Album"];
 const VALID_TAGS = new Set([
   "Aliens & First Contact",
   "Biopunk & Genetic Engineering",
