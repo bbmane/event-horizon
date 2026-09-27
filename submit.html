@@ -237,7 +237,31 @@
     white-space: nowrap;
   }
   .guidelines-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
-  
+
+  .autofill-btn {
+    display: block;
+    margin-top: 1rem;
+    background: none;
+    border: 1px dotted var(--accent-dim);
+    color: var(--accent-dim);
+    font-family: inherit;
+    font-size: 0.8rem;
+    padding: 0.35rem 0.6rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .autofill-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .autofill-btn:disabled { opacity: 0.5; cursor: default; }
+
+  .autofill-status {
+    font-size: 0.75rem;
+    color: var(--text-hint);
+    margin-top: 0.3rem;
+    min-height: 1em;
+  }
+  .autofill-status.ok { color: var(--ok); }
+  .autofill-status.err { color: var(--err); }
+
 </style>
 <script>
   let showUnderscore = true;
@@ -304,6 +328,8 @@
       <input type="url" id="url" name="url" placeholder="https://..." required>
       <div class="hint">Official page, store listing, AniList/Steam/MangaDex/IMDb, trailer, announcement.</div>
       <div class="field-error">Please enter a valid source link.</div>
+      <button type="button" id="autofillBtn" class="autofill-btn" hidden>⇩ autofill from Steam</button>
+      <div class="autofill-status" id="autofillStatus" aria-live="polite"></div>
     </div>
 
     <div class="field">
@@ -331,6 +357,8 @@
   // Vercel:     https://event-horizon-bbmane.vercel.app/api/submit
   // const WORKER_URL = 'https://event-horizon-bbmane.vercel.app/api/submit';
   const WORKER_URL = 'https://event-horizon-ecru-psi.vercel.app/api/submit';
+  // Stesso progetto Vercel, endpoint separato per l'autofill da Steam.
+  const LOOKUP_STEAM_URL = 'https://event-horizon-ecru-psi.vercel.app/api/lookup-steam';
 
   // I tag vivono in data/tags.json (fonte unica, condivisa con index.html e
   // con la validazione server-side): qui costruiamo le checkbox a partire da
@@ -431,6 +459,82 @@
   grid.addEventListener('change', () => {
     if (form.querySelectorAll('input[name="tags"]:checked').length > 0) {
       setInvalid(tagsField, false);
+    }
+  });
+
+  // --- Autofill da Steam ---
+  const imageInput = document.getElementById('image');
+  const autofillBtn = document.getElementById('autofillBtn');
+  const autofillStatus = document.getElementById('autofillStatus');
+
+  function isSteamUrl(value) {
+    try {
+      const u = new URL(value);
+      return /(^|\.)store\.steampowered\.com$/.test(u.hostname) && /\/app\/\d+/.test(u.pathname);
+    } catch {
+      return false;
+    }
+  }
+
+  urlInput.addEventListener('input', () => {
+    autofillBtn.hidden = !isSteamUrl(urlInput.value.trim());
+    autofillStatus.textContent = '';
+    autofillStatus.className = 'autofill-status';
+  });
+
+  autofillBtn.addEventListener('click', async () => {
+    const link = urlInput.value.trim();
+    if (!isSteamUrl(link)) return;
+
+    autofillBtn.disabled = true;
+    autofillBtn.textContent = 'looking up...';
+    autofillStatus.className = 'autofill-status';
+    autofillStatus.textContent = '';
+
+    try {
+      const resp = await fetch(`${LOOKUP_STEAM_URL}?url=${encodeURIComponent(link)}`);
+      const result = await resp.json();
+
+      if (!resp.ok || !result.ok) {
+        autofillStatus.className = 'autofill-status err';
+        autofillStatus.textContent = `⚠️ ${result.error || 'Could not look up this app.'}`;
+        return;
+      }
+
+      // Sovrascrive ogni campo per cui Steam ha restituito un valore, anche
+      // se l'utente aveva già scritto qualcosa - così il risultato è sempre
+      // visibile e prevedibile invece di dipendere silenziosamente da cosa
+      // era già compilato. Resta comunque tutto modificabile dopo.
+      const filled = [];
+      if (result.title) {
+        titleInput.value = result.title;
+        setInvalid(titleField, false);
+        filled.push('title');
+      }
+      if (result.date) {
+        dateInput.value = result.date;
+        filled.push('date');
+      }
+      if (result.image) {
+        imageInput.value = result.image;
+        filled.push('cover');
+      }
+      if (result.type) {
+        typeInput.value = result.type;
+        setInvalid(typeField, false);
+        filled.push('type');
+      }
+
+      autofillStatus.className = 'autofill-status ok';
+      autofillStatus.textContent = filled.length
+        ? `✅ Filled: ${filled.join(', ')}. Please double-check before submitting.`
+        : 'Nothing to fill — fields already had values.';
+    } catch (err) {
+      autofillStatus.className = 'autofill-status err';
+      autofillStatus.textContent = '⚠️ Could not reach the lookup service.';
+    } finally {
+      autofillBtn.disabled = false;
+      autofillBtn.textContent = '⇩ autofill from Steam';
     }
   });
 
