@@ -11,6 +11,33 @@
     "image_url": "https://www.themoviedb.org/t/p/w600_and_h900_face/y9c1AwrldWRsY9edSf21cOgbI0h.jpg"
   },
   {
+    "id": "issue-24",
+    "type": "anime",
+    "title": "GROTESQQQUE",
+    "date": "2026-11-06",
+    "source_url": "https://movie-gtq123.com/",
+    "tags": [
+      1,
+      13,
+      17
+    ],
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx178972-THp4trZ9uR9b.jpg"
+  },
+  {
+    "id": "issue-23",
+    "type": "anime",
+    "title": "Armored Trooper Votoms: The Grey Witch",
+    "date": "2026-11-20",
+    "source_url": "https://www.votoms-gh.com",
+    "tags": [
+      5,
+      8,
+      12,
+      13
+    ],
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx206163-c5DwZdBNCXEO.jpg"
+  },
+  {
     "id": "issue-12",
     "type": "series",
     "title": "Blade Runner 2099",
