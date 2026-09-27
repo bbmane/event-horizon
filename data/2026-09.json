@@ -78,6 +78,19 @@
     "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/coc64f.jpg"
   },
   {
+    "id": "issue-31",
+    "type": "game",
+    "title": "Recurrence",
+    "date": "2026-09-25",
+    "source_url": "https://store.steampowered.com/app/3354130/Recurrence/",
+    "tags": [
+      4,
+      5,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3354130/e4c3d8da2bf998cb8c82d315983157d973ea2102/library_600x900_2x.jpg"
+  },
+  {
     "id": "issue-10",
     "type": "game",
     "title": "Nivalis Nights",
