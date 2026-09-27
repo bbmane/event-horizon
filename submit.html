@@ -256,8 +256,9 @@
   .autofill-status {
     font-size: 0.75rem;
     color: var(--text-hint);
+  }
+  .autofill-status:not(:empty) {
     margin-top: 1rem;
-    min-height: 1em;
   }
   .autofill-status.ok { color: var(--ok); }
   .autofill-status.err { color: var(--err); }
