@@ -51,6 +51,20 @@
     "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cobteq.jpg"
   },
   {
+    "id": "issue-28",
+    "type": "movie",
+    "title": "Resident Evil (2026)",
+    "date": "2026-09-16",
+    "source_url": "https://www.themoviedb.org/movie/1423191-resident-evil/",
+    "tags": [
+      2,
+      5,
+      11,
+      13
+    ],
+    "image_url": "https://media.themoviedb.org/t/p/original/D8rnntI88rgzWKDK2yuxm25HTQ.jpg"
+  },
+  {
     "id": "issue-7",
     "type": "game",
     "title": "Control Resonant",

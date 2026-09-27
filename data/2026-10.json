@@ -41,6 +41,18 @@
     "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx195539-jaarfaxv6K0Z.jpg"
   },
   {
+    "id": "issue-29",
+    "type": "movie",
+    "title": "Clayface (2026)",
+    "date": "2026-10-21",
+    "source_url": "https://www.themoviedb.org/movie/1400940-clayface/",
+    "tags": [
+      2,
+      13
+    ],
+    "image_url": "https://media.themoviedb.org/t/p/original/5jCpQnWPikggmQZoDp1eAi6BI6w.jpg"
+  },
+  {
     "id": "issue-25",
     "type": "anime",
     "title": "Made in Abyss: Awakening Mystery",

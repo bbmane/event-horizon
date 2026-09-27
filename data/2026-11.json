@@ -11,6 +11,19 @@
     "image_url": "https://www.themoviedb.org/t/p/w600_and_h900_face/y9c1AwrldWRsY9edSf21cOgbI0h.jpg"
   },
   {
+    "id": "issue-27",
+    "type": "movie",
+    "title": "Godzilla Minus Zero",
+    "date": "2026-11-03",
+    "source_url": "https://www.themoviedb.org/movie/1381071-0-0/",
+    "tags": [
+      7,
+      11,
+      13
+    ],
+    "image_url": "https://m.media-amazon.com/images/M/MV5BYzY2OWFhMTgtODJhMi00NDIyLWIzNTQtYjc4MjE4YTBjYzllXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
+  },
+  {
     "id": "issue-24",
     "type": "anime",
     "title": "GROTESQQQUE",
