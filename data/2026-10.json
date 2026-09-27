@@ -1,5 +1,18 @@
 [
   {
+    "id": "issue-22",
+    "type": "anime",
+    "title": "Sgt. Frog (2026)",
+    "date": "2026-10-03",
+    "source_url": "https://www.bn-pictures.co.jp/keroro-anime/tv/",
+    "tags": [
+      1,
+      18,
+      13
+    ],
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx216557-9CXz04CEmXOi.png"
+  },
+  {
     "id": "issue-11",
     "type": "anime",
     "title": "Cyberpunk: Edgerunners [SEASON 2]",
