@@ -91,7 +91,13 @@ export default async function handler(req, res) {
   let steamResp;
   try {
     steamResp = await fetch(
-      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`
+      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`,
+      {
+        // Senza questo cookie, l'API risponde "success: false" per i giochi
+        // dietro age-check (18+/mature) invece dei dati veri - lo stesso
+        // check che mostra il popup "conferma la tua età" sul sito.
+        headers: { Cookie: "birthtime=0; lastagecheckage=1-0-1900; wants_mature_content=1" },
+      }
     );
   } catch (err) {
     console.error("Steam fetch error", err);
