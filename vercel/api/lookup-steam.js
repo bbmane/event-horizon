@@ -113,12 +113,30 @@ export default async function handler(req, res) {
 
   const data = entry.data;
   const releaseDate = parseSteamDate(data.release_date && data.release_date.date);
+  const image = await resolveCoverImage(appId, data.header_image || "");
 
   res.status(200).json({
     ok: true,
     title: data.name || "",
     date: releaseDate, // "" se non ricavabile con certezza: l'utente la compila a mano
-    image: data.header_image || "",
+    image,
     type: "Video Game",
   });
+}
+
+// La "library capsule" (copertina verticale, il formato bello per una cover)
+// vive a un URL fisso e prevedibile, costruibile dal solo appid, senza bisogno
+// di alcuna chiamata API: https://cdn.cloudflare.steamstatic.com/steam/apps/<id>/library_600x900_2x.jpg
+// Non tutti i giochi la hanno caricata (soprattutto titoli piccoli/vecchi), quindi
+// verifichiamo con un HEAD prima di usarla, e in caso di assenza ripieghiamo
+// sull'header_image (orizzontale) già presente nella risposta di appdetails.
+async function resolveCoverImage(appId, fallback) {
+  const libraryUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${appId}/library_600x900_2x.jpg`;
+  try {
+    const head = await fetch(libraryUrl, { method: "HEAD" });
+    if (head.ok) return libraryUrl;
+  } catch {
+    // rete/timeout: ripieghiamo silenziosamente sul fallback
+  }
+  return fallback;
 }
