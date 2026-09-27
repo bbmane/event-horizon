@@ -1,5 +1,19 @@
 [
   {
+    "id": "issue-32",
+    "type": "game",
+    "title": "SPRAWL zero",
+    "date": "2026-09-08",
+    "source_url": "https://store.steampowered.com/app/3748520/SPRAWL_zero/",
+    "tags": [
+      4,
+      5,
+      11,
+      13
+    ],
+    "image_url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3748520/36314df2db6630fa296aa8af1a869fb15080fcf1/capsule_616x353.jpg?t=1790240546"
+  },
+  {
     "id": "issue-8",
     "type": "manga",
     "title": "Glitch Witch",
