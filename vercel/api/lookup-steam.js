@@ -91,13 +91,7 @@ export default async function handler(req, res) {
   let steamResp;
   try {
     steamResp = await fetch(
-      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`,
-      {
-        // Senza questo cookie, l'API risponde "success: false" per i giochi
-        // dietro age-check (18+/mature) invece dei dati veri - lo stesso
-        // check che mostra il popup "conferma la tua età" sul sito.
-        headers: { Cookie: "birthtime=0; lastagecheckage=1-0-1900; wants_mature_content=1" },
-      }
+      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`
     );
   } catch (err) {
     console.error("Steam fetch error", err);
@@ -112,22 +106,77 @@ export default async function handler(req, res) {
 
   const body = await steamResp.json();
   const entry = body[appId];
-  if (!entry || !entry.success || !entry.data) {
+
+  // Per i giochi dietro age-check (18+/mature - violenza, linguaggio forte,
+  // contenuti sessuali...) questa API risponde SEMPRE "success: false",
+  // indipendentemente da qualunque cookie: il bypass dell'age-gate funziona
+  // solo sulla pagina HTML del negozio, non su questo endpoint JSON. In quel
+  // caso ripieghiamo su uno scraping mirato della pagina stessa.
+  const data = entry && entry.success ? entry.data : null;
+  const scraped = data ? null : await scrapeStorePage(appId);
+
+  if (!data && !scraped) {
     res.status(404).json({ ok: false, error: "Steam couldn't find this app (removed, region-locked, or invalid id)." });
     return;
   }
 
-  const data = entry.data;
-  const releaseDate = parseSteamDate(data.release_date && data.release_date.date);
-  const image = await resolveCoverImage(appId, data.header_image || "");
+  const title = data ? data.name || "" : scraped.title;
+  const releaseDateText = data ? (data.release_date && data.release_date.date) : scraped.date;
+  const headerImage = data ? data.header_image || "" : scraped.image;
+
+  const releaseDate = parseSteamDate(releaseDateText);
+  const image = await resolveCoverImage(appId, headerImage);
 
   res.status(200).json({
     ok: true,
-    title: data.name || "",
+    title,
     date: releaseDate, // "" se non ricavabile con certezza: l'utente la compila a mano
     image,
     type: "Video Game",
   });
+}
+
+// Fallback per i titoli age-gated: la pagina HTML del negozio, a differenza
+// dell'API JSON, rispetta davvero il cookie che dichiara l'età già
+// verificata. Estraiamo solo il minimo indispensabile (titolo, og:image,
+// data di uscita) via regex mirate, invece di un parsing HTML completo.
+async function scrapeStorePage(appId) {
+  let resp;
+  try {
+    resp = await fetch(`https://store.steampowered.com/app/${appId}/?l=english`, {
+      headers: {
+        Cookie: "birthtime=0; lastagecheckage=1-0-1900; wants_mature_content=1",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+    });
+  } catch (err) {
+    console.error("Steam store page fetch error", err);
+    return null;
+  }
+  if (!resp.ok) return null;
+
+  const html = await resp.text();
+
+  const titleMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
+  if (!titleMatch) return null; // pagina non trovata / struttura inattesa: niente da estrarre
+
+  const dateMatch = html.match(/<div class="release_date">[\s\S]*?<div class="date">([^<]+)<\/div>/);
+  const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
+
+  return {
+    title: decodeHtmlEntities(titleMatch[1]).replace(/\s+on Steam$/i, "").trim(),
+    date: dateMatch ? decodeHtmlEntities(dateMatch[1]).trim() : "",
+    image: imageMatch ? imageMatch[1] : "",
+  };
+}
+
+function decodeHtmlEntities(text) {
+  return text
+    .replace(/&amp;/g, "&")
+    .replace(/&quot;/g, '"')
+    .replace(/&#0?39;/g, "'")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">");
 }
 
 // La "library capsule" (copertina verticale, il formato bello per una cover)
