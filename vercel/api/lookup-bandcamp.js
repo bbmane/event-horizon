@@ -5,14 +5,14 @@
  *
  * Bandcamp non ha un'API pubblica per letture di terze parti (la loro API
  * ufficiale è riservata agli account Label per i propri dati di vendita), ma
- * ogni pagina album incorpora già i dati che ci servono in due punti:
- *   - i tag Open Graph (<meta property="og:title">, "og:image") - gli stessi
- *     che genererebbero un'anteprima social del link
- *   - il campo "album_release_date" dentro il blob JS "TralbumData" che la
- *     pagina embedda per far funzionare il player
- * Estraiamo entrambi con regex mirate sui singoli valori (mai un parsing/eval
- * dell'intero blob JS, che sarebbe eseguire codice di una pagina esterna) -
- * stessa tecnica già usata nel fallback age-gate di lookup-steam.js.
+ * ogni pagina album incorpora già i dati che ci servono in due meta tag:
+ *   - <meta property="og:title"/"og:image"> - le stesse che genererebbero
+ *     un'anteprima social del link
+ *   - <meta name="description"> - contiene una frase tipo "Titolo by
+ *     Artista, released 28 August 2026" da cui estraiamo la data
+ * Estraiamo tutto con regex mirate sui singoli meta tag (mai un parsing/eval
+ * di script della pagina) - stessa tecnica già usata nel fallback age-gate
+ * di lookup-steam.js.
  *
  * Nessuna env var nuova richiesta: riusa ALLOWED_ORIGIN già impostata per
  * /api/submit.
@@ -36,6 +36,18 @@ function isBandcampAlbumUrl(rawUrl) {
   // Sottodomini artista tipo "mcrecordings.bandcamp.com", non bandcamp.com
   // nudo (che è il sito principale, non una pagina album).
   return /\.bandcamp\.com$/.test(u.hostname) && u.hostname !== "bandcamp.com" && /\/album\//.test(u.pathname);
+}
+
+// Estrae il "content" di un <meta> tag cercando prima il tag per intero (via
+// name="..."/property="..."), poi il content al suo interno - così funziona
+// indipendentemente dall'ordine in cui Bandcamp scrive gli attributi (che
+// non è sempre lo stesso, a differenza di quanto assunto in una prima
+// versione di questo file).
+function extractMetaContent(html, attr, value) {
+  const tagMatch = html.match(new RegExp(`<meta[^>]*${attr}=["']${value}["'][^>]*>`, "i"));
+  if (!tagMatch) return null;
+  const contentMatch = tagMatch[0].match(/content=["']([^"']*)["']/i);
+  return contentMatch ? contentMatch[1] : null;
 }
 
 function decodeHtmlEntities(text) {
@@ -119,23 +131,23 @@ export default async function handler(req, res) {
 
   const html = await resp.text();
 
-  const titleMatch = html.match(/<meta property="og:title" content="([^"]+)"/);
-  if (!titleMatch) {
+  const ogTitle = extractMetaContent(html, "property", "og:title");
+  if (!ogTitle) {
     res.status(404).json({ ok: false, error: "Couldn't read this Bandcamp page (unexpected layout)." });
     return;
   }
 
-  const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
-  const descMatch = html.match(/<meta name="description" content="([^"]+)"/);
-  const dateTextMatch = descMatch
-    ? decodeHtmlEntities(descMatch[1]).match(/,\s*(?:released|releases)\s+(.+)$/i)
+  const ogImage = extractMetaContent(html, "property", "og:image");
+  const description = extractMetaContent(html, "name", "description");
+  const dateTextMatch = description
+    ? decodeHtmlEntities(description).match(/,\s*(?:released|releases)\s+(.+)$/i)
     : null;
 
   res.status(200).json({
     ok: true,
-    title: formatTitle(decodeHtmlEntities(titleMatch[1])),
+    title: formatTitle(decodeHtmlEntities(ogTitle)),
     date: dateTextMatch ? parseReleaseDateText(dateTextMatch[1].trim()) : "", // "" se non trovata: da compilare a mano
-    image: imageMatch ? imageMatch[1] : "",
+    image: ogImage || "",
     type: "Album",
   });
 }
