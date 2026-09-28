@@ -327,7 +327,7 @@
     <div class="field" id="urlField">
       <label for="url">Source link</label>
       <input type="url" id="url" name="url" placeholder="https://..." required>
-      <div class="hint">Official page, store listing, AniList/Steam/MangaDex/IMDb, trailer, announcement.</div>
+      <div class="hint">Official page, store listing, trailer, announcement.</div>
       <div class="hint" id="autofillHint"></div>
       <div class="field-error">Please enter a valid source link.</div>
       <button type="button" id="autofillBtn" class="autofill-btn" hidden>⇩ autofill</button>
@@ -487,6 +487,11 @@
       label: 'AniList',
       matches: (u) => /(^|\.)anilist\.co$/.test(u.hostname) && /\/(anime|manga)\/\d+/.test(u.pathname),
     },
+    {
+      id: 'bandcamp',
+      label: 'Bandcamp',
+      matches: (u) => /\.bandcamp\.com$/.test(u.hostname) && u.hostname !== 'bandcamp.com' && /\/album\//.test(u.pathname),
+    },
     // Aggiungere qui una nuova fonte (id + label + matches, più eventuale
     // hint) non appena il suo /api/lookup-<id>.js corrispondente esiste - il
     // messaggio sotto il campo Source link si aggiorna da solo, senza
@@ -497,11 +502,6 @@
     //   label: 'TMDB',
     //   matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
     //   hint: 'If this is an anime, switch Type to Anime manually — TMDB can\'t tell the difference.',
-    // },
-    // {
-    //   id: 'bandcamp',
-    //   label: 'Bandcamp',
-    //   matches: (u) => /\.bandcamp\.com$/.test(u.hostname) && /\/album\//.test(u.pathname),
     // },
   ];
 
