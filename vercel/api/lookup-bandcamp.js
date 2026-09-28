@@ -138,15 +138,29 @@ export default async function handler(req, res) {
   }
 
   const ogImage = extractMetaContent(html, "property", "og:image");
-  const description = extractMetaContent(html, "name", "description");
+  /* const description = extractMetaContent(html, "name", "description");
   const dateTextMatch = description
     ? decodeHtmlEntities(description).match(/,\s*(?:released|releases)\s+(.+)$/i)
     : null;
+    */
+  
+  const description = extractMetaContent(html, "name", "description");
+  let releaseDate = "";
+
+  if (description) {
+    const cleanDesc = decodeHtmlEntities(description);
+    const datePhraseMatch = cleanDesc.match(/(?:released|releases)\s+([A-Za-z]+\s+\d{1,2},?\s+\d{4}|\d{1,2}\s+[A-Za-z]+\s+\d{4})/i);
+    
+    if (datePhraseMatch) {
+      releaseDate = parseReleaseDateText(datePhraseMatch[1].trim());
+    }
+  }
 
   res.status(200).json({
     ok: true,
     title: formatTitle(decodeHtmlEntities(ogTitle)),
-    date: dateTextMatch ? parseReleaseDateText(dateTextMatch[1].trim()) : "", // "" se non trovata: da compilare a mano
+    // date: dateTextMatch ? parseReleaseDateText(dateTextMatch[1].trim()) : "", // "" se non trovata: da compilare a mano
+    date: releaseDate,
     image: ogImage || "",
     type: "Album",
   });
