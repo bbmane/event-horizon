@@ -56,12 +56,31 @@ function formatTitle(ogTitle) {
   return match ? `${match[2]} - ${match[1]}` : ogTitle;
 }
 
-// "album_release_date" nel blob TralbumData è nel formato
-// "07 Sep 2026 00:00:00 GMT" - standard, parseable direttamente da Date().
-function parseReleaseDate(text) {
-  const d = new Date(text);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toISOString().slice(0, 10);
+const MONTHS = {
+  jan: "01", feb: "02", mar: "03", apr: "04", may: "05", jun: "06",
+  jul: "07", aug: "08", sep: "09", oct: "10", nov: "11", dec: "12",
+};
+
+// La data non vive in un campo dati dedicato ma dentro la frase della
+// <meta name="description">, tipo:
+//   "<titolo> by <artista>, released 03 June 2025"      (già uscito)
+//   "<titolo> by <artista>, releases February 27, 2026"  (in pre-order)
+// Due ordini diversi (giorno-mese / mese-giorno) a seconda del verbo, quindi
+// proviamo entrambi i pattern invece di assumerne uno solo.
+function parseReleaseDateText(text) {
+  let m = text.match(/^(\d{1,2})\s+([A-Za-z]+)\s+(\d{4})$/); // "03 June 2025"
+  if (m) {
+    const mon = MONTHS[m[2].slice(0, 3).toLowerCase()];
+    if (mon) return `${m[3]}-${mon}-${String(m[1]).padStart(2, "0")}`;
+  }
+
+  m = text.match(/^([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})$/); // "February 27, 2026"
+  if (m) {
+    const mon = MONTHS[m[1].slice(0, 3).toLowerCase()];
+    if (mon) return `${m[3]}-${mon}-${String(m[2]).padStart(2, "0")}`;
+  }
+
+  return "";
 }
 
 export default async function handler(req, res) {
@@ -107,12 +126,15 @@ export default async function handler(req, res) {
   }
 
   const imageMatch = html.match(/<meta property="og:image" content="([^"]+)"/);
-  const dateMatch = html.match(/album_release_date"?\s*:\s*"([^"]+)"/);
+  const descMatch = html.match(/<meta name="description" content="([^"]+)"/);
+  const dateTextMatch = descMatch
+    ? decodeHtmlEntities(descMatch[1]).match(/,\s*(?:released|releases)\s+(.+)$/i)
+    : null;
 
   res.status(200).json({
     ok: true,
     title: formatTitle(decodeHtmlEntities(titleMatch[1])),
-    date: dateMatch ? parseReleaseDate(dateMatch[1]) : "", // "" se non trovata: da compilare a mano
+    date: dateTextMatch ? parseReleaseDateText(dateTextMatch[1].trim()) : "", // "" se non trovata: da compilare a mano
     image: imageMatch ? imageMatch[1] : "",
     type: "Album",
   });
