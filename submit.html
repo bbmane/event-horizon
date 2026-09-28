@@ -328,6 +328,7 @@
       <label for="url">Source link</label>
       <input type="url" id="url" name="url" placeholder="https://..." required>
       <div class="hint">Official page, store listing, AniList/Steam/MangaDex/IMDb, trailer, announcement.</div>
+      <div class="hint" id="autofillHint"></div>
       <div class="field-error">Please enter a valid source link.</div>
       <button type="button" id="autofillBtn" class="autofill-btn" hidden>⇩ autofill</button>
       <div class="autofill-status" id="autofillStatus" aria-live="polite"></div>
@@ -486,20 +487,28 @@
       label: 'AniList',
       matches: (u) => /(^|\.)anilist\.co$/.test(u.hostname) && /\/(anime|manga)\/\d+/.test(u.pathname),
     },
-    {
-      id: 'tmdb',
-      label: 'TMDB',
-      matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
-      // TMDB non distingue un film/serie anime da uno "normale": il tipo che
-      // restituisce è sempre Movie/TV Series, va ricontrollato a mano.
-      hint: 'If this is an anime, switch Type to Anime manually — TMDB can\'t tell the difference.',
-    },
-    {
-      id: 'bandcamp',
-      label: 'Bandcamp',
-      matches: (u) => /\.bandcamp\.com$/.test(u.hostname) && /\/album\//.test(u.pathname),
-    },
+    // Aggiungere qui una nuova fonte (id + label + matches, più eventuale
+    // hint) non appena il suo /api/lookup-<id>.js corrispondente esiste - il
+    // messaggio sotto il campo Source link si aggiorna da solo, senza
+    // bisogno di toccarlo a mano.
+    //
+    // {
+    //   id: 'tmdb',
+    //   label: 'TMDB',
+    //   matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
+    //   hint: 'If this is an anime, switch Type to Anime manually — TMDB can\'t tell the difference.',
+    // },
+    // {
+    //   id: 'bandcamp',
+    //   label: 'Bandcamp',
+    //   matches: (u) => /\.bandcamp\.com$/.test(u.hostname) && /\/album\//.test(u.pathname),
+    // },
   ];
+
+  // Elenco leggibile delle fonti autofill davvero attive, così chi compila
+  // il form non pensa (sbagliando) che funzioni con qualunque link incollato.
+  document.getElementById('autofillHint').textContent =
+    `Autofill available for: ${AUTOFILL_SOURCES.map((s) => s.label).join(', ')}.`;
 
   let currentSource = null;
 
