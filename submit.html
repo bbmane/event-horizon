@@ -329,7 +329,7 @@
       <input type="url" id="url" name="url" placeholder="https://..." required>
       <div class="hint">Official page, store listing, AniList/Steam/MangaDex/IMDb, trailer, announcement.</div>
       <div class="field-error">Please enter a valid source link.</div>
-      <button type="button" id="autofillBtn" class="autofill-btn" hidden>⇩ autofill from Steam</button>
+      <button type="button" id="autofillBtn" class="autofill-btn" hidden>⇩ autofill</button>
       <div class="autofill-status" id="autofillStatus" aria-live="polite"></div>
     </div>
 
@@ -358,8 +358,9 @@
   // Vercel:     https://event-horizon-bbmane.vercel.app/api/submit
   // const WORKER_URL = 'https://event-horizon-bbmane.vercel.app/api/submit';
   const WORKER_URL = 'https://event-horizon-ecru-psi.vercel.app/api/submit';
-  // Stesso progetto Vercel, endpoint separato per l'autofill da Steam.
-  const LOOKUP_STEAM_URL = 'https://event-horizon-ecru-psi.vercel.app/api/lookup-steam';
+  // Stesso progetto Vercel: ogni fonte di autofill ha il suo endpoint
+  // /api/lookup-<source-id> (es. lookup-steam, lookup-anilist, ...).
+  const LOOKUP_BASE_URL = 'https://event-horizon-ecru-psi.vercel.app/api';
 
   // I tag vivono in data/tags.json (fonte unica, condivisa con index.html e
   // con la validazione server-side): qui costruiamo le checkbox a partire da
@@ -463,29 +464,67 @@
     }
   });
 
-  // --- Autofill da Steam ---
+  // --- Autofill: riconoscimento fonte dal link incollato ---
   const imageInput = document.getElementById('image');
   const autofillBtn = document.getElementById('autofillBtn');
   const autofillStatus = document.getElementById('autofillStatus');
 
-  function isSteamUrl(value) {
+  // Ogni fonte ha un id (usato per costruire l'URL dell'endpoint
+  // /api/lookup-<id>), un'etichetta per il pulsante, un matcher sul link
+  // incollato e un eventuale hint mostrato in più dopo un fill riuscito
+  // (es. per avvisare quando la classificazione del tipo va ricontrollata
+  // a mano). Aggiungere una nuova fonte in futuro significa solo aggiungere
+  // una voce qui + il file /api/lookup-<id>.js corrispondente.
+  const AUTOFILL_SOURCES = [
+    {
+      id: 'steam',
+      label: 'Steam',
+      matches: (u) => /(^|\.)store\.steampowered\.com$/.test(u.hostname) && /\/app\/\d+/.test(u.pathname),
+    },
+    {
+      id: 'anilist',
+      label: 'AniList',
+      matches: (u) => /(^|\.)anilist\.co$/.test(u.hostname) && /\/(anime|manga)\/\d+/.test(u.pathname),
+    },
+    {
+      id: 'tmdb',
+      label: 'TMDB',
+      matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
+      // TMDB non distingue un film/serie anime da uno "normale": il tipo che
+      // restituisce è sempre Movie/TV Series, va ricontrollato a mano.
+      hint: 'If this is an anime, switch Type to Anime manually — TMDB can\'t tell the difference.',
+    },
+    {
+      id: 'bandcamp',
+      label: 'Bandcamp',
+      matches: (u) => /\.bandcamp\.com$/.test(u.hostname) && /\/album\//.test(u.pathname),
+    },
+  ];
+
+  let currentSource = null;
+
+  function detectAutofillSource(value) {
+    let u;
     try {
-      const u = new URL(value);
-      return /(^|\.)store\.steampowered\.com$/.test(u.hostname) && /\/app\/\d+/.test(u.pathname);
+      u = new URL(value);
     } catch {
-      return false;
+      return null;
     }
+    return AUTOFILL_SOURCES.find((s) => s.matches(u)) || null;
   }
 
   urlInput.addEventListener('input', () => {
-    autofillBtn.hidden = !isSteamUrl(urlInput.value.trim());
+    currentSource = detectAutofillSource(urlInput.value.trim());
+    autofillBtn.hidden = !currentSource;
+    if (currentSource) autofillBtn.textContent = `⇩ autofill from ${currentSource.label}`;
     autofillStatus.textContent = '';
     autofillStatus.className = 'autofill-status';
   });
 
   autofillBtn.addEventListener('click', async () => {
     const link = urlInput.value.trim();
-    if (!isSteamUrl(link)) return;
+    const source = currentSource;
+    if (!source) return;
 
     autofillBtn.disabled = true;
     autofillBtn.textContent = 'looking up...';
@@ -493,19 +532,18 @@
     autofillStatus.textContent = '';
 
     try {
-      const resp = await fetch(`${LOOKUP_STEAM_URL}?url=${encodeURIComponent(link)}`);
+      const resp = await fetch(`${LOOKUP_BASE_URL}/lookup-${source.id}?url=${encodeURIComponent(link)}`);
       const result = await resp.json();
 
       if (!resp.ok || !result.ok) {
         autofillStatus.className = 'autofill-status err';
-        autofillStatus.textContent = `⚠️ ${result.error || 'Could not look up this app.'}`;
+        autofillStatus.textContent = `⚠️ ${result.error || 'Could not look up this link.'}`;
         return;
       }
 
-      // Sovrascrive ogni campo per cui Steam ha restituito un valore, anche
-      // se l'utente aveva già scritto qualcosa - così il risultato è sempre
-      // visibile e prevedibile invece di dipendere silenziosamente da cosa
-      // era già compilato. Resta comunque tutto modificabile dopo.
+      // Sovrascrive ogni campo per cui la fonte ha restituito un valore,
+      // anche se l'utente aveva già scritto qualcosa - così il risultato è
+      // sempre visibile e prevedibile. Resta comunque tutto modificabile dopo.
       const filled = [];
       if (result.title) {
         titleInput.value = result.title;
@@ -527,15 +565,16 @@
       }
 
       autofillStatus.className = 'autofill-status ok';
-      autofillStatus.textContent = filled.length
+      const base = filled.length
         ? `✅ Filled: ${filled.join(', ')}. Please double-check before submitting.`
-        : 'Nothing to fill — fields already had values.';
+        : 'Nothing to fill — no data returned.';
+      autofillStatus.textContent = source.hint ? `${base} ${source.hint}` : base;
     } catch (err) {
       autofillStatus.className = 'autofill-status err';
       autofillStatus.textContent = '⚠️ Could not reach the lookup service.';
     } finally {
       autofillBtn.disabled = false;
-      autofillBtn.textContent = '⇩ autofill from Steam';
+      autofillBtn.textContent = `⇩ autofill from ${source.label}`;
     }
   });
 
