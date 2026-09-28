@@ -11,5 +11,17 @@
       13
     ],
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2075800/b31bf93081c683ceab8ec3c4e5be085acda444c9/library_capsule_2x.jpg"
+  },
+  {
+    "id": "issue-34",
+    "type": "album",
+    "title": "Kontrakt - NULL_ENTITY",
+    "date": "2026-08-28",
+    "source_url": "https://cyberecordings.bandcamp.com/album/null-entity",
+    "tags": [
+      4,
+      16
+    ],
+    "image_url": "https://f4.bcbits.com/img/a2347447518_5.jpg"
   }
 ]
