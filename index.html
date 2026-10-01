@@ -9,7 +9,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
-<title>event-horizon_</title>
+<title>Event.Horizon_</title>
 <style>
   :root {
     --bg: #0b0f12;
@@ -455,7 +455,7 @@
     margin-bottom: 1rem;
   }
 
-  .topbar .header { margin-bottom: 0.5rem; padding-bottom: 0.7rem; }
+  .topbar .header { margin-bottom: 0.5rem; padding-bottom: 1rem; }
 
   .header-links {
     display: flex;
@@ -504,11 +504,17 @@
     font-size: 0.85rem;
     padding: 0 0.2rem;
   }
+
+  @media (max-width: 520px) {
+    .month-strip { display: none; }
+    .topbar { position: static; }   /* su mobile l'header non resta fisso */
+  }
+
 </style>
 <script>
   let showUnderscore = true;
   setInterval(() => {
-    document.title = showUnderscore ? "event-horizon_" : "event-horizon";
+    document.title = showUnderscore ? "Event.Horizon_" : "Event.Horizon";
     showUnderscore = !showUnderscore;
   }, 550); // Speed
 </script>
@@ -518,9 +524,9 @@
 
   <div class="topbar">
     <div class="header">
-      <h1>releases.log</h1>
+      <h1>Event.Horizon</h1>
       <span class="header-links">
-        <a href="https://github.com/bbmane/event-horizon" target="_blank" rel="noopener" class="prompt">hype-sharing, community-based, sci-fi cyber-feed</a>
+        <div class="prompt">hype-sharing, community-based, sci-fi cyber-feed</div>
       </span>
     </div>
     <div class="month-strip" id="monthStrip" aria-label="jump to month"></div>
