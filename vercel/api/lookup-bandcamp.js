@@ -117,6 +117,7 @@ export default async function handler(req, res) {
   try {
     resp = await fetch(rawUrl, {
       headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" },
+      signal: AbortSignal.timeout(5000),
     });
   } catch (err) {
     console.error("Bandcamp fetch error", err);
@@ -155,7 +156,8 @@ export default async function handler(req, res) {
       releaseDate = parseReleaseDateText(datePhraseMatch[1].trim());
     }
   }
-
+  
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   res.status(200).json({
     ok: true,
     title: formatTitle(decodeHtmlEntities(ogTitle)),
