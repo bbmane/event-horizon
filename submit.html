@@ -493,17 +493,12 @@
       label: 'Bandcamp',
       matches: (u) => /\.bandcamp\.com$/.test(u.hostname) && u.hostname !== 'bandcamp.com' && /\/album\//.test(u.pathname),
     },
-    // Aggiungere qui una nuova fonte (id + label + matches, più eventuale
-    // hint) non appena il suo /api/lookup-<id>.js corrispondente esiste - il
-    // messaggio sotto il campo Source link si aggiorna da solo, senza
-    // bisogno di toccarlo a mano.
-    //
-    // {
-    //   id: 'tmdb',
-    //   label: 'TMDB',
-    //   matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
-    //   hint: 'If this is an anime, switch Type to Anime manually — TMDB can\'t tell the difference.',
-    // },
+    {
+      id: 'tmdb',
+      label: 'TMDB',
+      matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
+      hint: "If this is an anime, switch Type to Anime manually — TMDB can't tell the difference.",
+    },
   ];
 
   // Elenco leggibile delle fonti autofill davvero attive, così chi compila
