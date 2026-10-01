@@ -27,6 +27,35 @@
     "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx209499-S0sWFrCpft85.jpg"
   },
   {
+    "id": "issue-37",
+    "type": "game",
+    "title": "Gears of War: E-Day",
+    "date": "2026-10-06",
+    "source_url": "https://store.steampowered.com/app/3010850/Gears_of_War_EDay/",
+    "tags": [
+      1,
+      5,
+      11,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3010850/f81b268dd5cb697bb6fc73e718f3a57a70657211/library_capsule_2x.jpg"
+  },
+  {
+    "id": "issue-36",
+    "type": "game",
+    "title": "STAR WARS: Galactic Racer",
+    "date": "2026-10-06",
+    "source_url": "https://store.steampowered.com/app/4078430/STAR_WARS_Galactic_Racer/",
+    "tags": [
+      1,
+      10,
+      18,
+      12,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4078430/16514821db6559e75c9067285fee5dd198492aee/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-11",
     "type": "anime",
     "title": "Cyberpunk: Edgerunners [SEASON 2]",
