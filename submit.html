@@ -522,6 +522,14 @@
     return AUTOFILL_SOURCES.find((s) => s.matches(u)) || null;
   }
 
+  function resetAutofillUI() {
+    currentSource = null;
+    autofillBtn.hidden = true;
+    autofillBtn.disabled = false;
+    autofillStatus.textContent = '';
+    autofillStatus.className = 'autofill-status';
+  }
+
   urlInput.addEventListener('input', () => {
     currentSource = detectAutofillSource(urlInput.value.trim());
     autofillBtn.hidden = !currentSource;
@@ -583,7 +591,7 @@
       autofillStatus.textContent = '⚠️ Could not reach the lookup service.';
     } finally {
       autofillBtn.disabled = false;
-      autofillBtn.textContent = `⇩ autofill from ${source.label}`;
+      if (currentSource) autofillBtn.textContent = `⇩ autofill from ${currentSource.label}`;
     }
   });
 
@@ -628,6 +636,7 @@
         statusEl.className = 'status ok';
         statusEl.textContent = `✅ Submitted (issue #${result.issue_number}). It will be reviewed and show up on the calendar once approved.`;
         form.reset();
+        resetAutofillUI();
       } else {
         statusEl.className = 'status err';
         statusEl.textContent = `⚠️ ${result.error || 'Something went wrong, please try again.'}`;
