@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌌</text></svg>">
+<title>about // Event.Horizon_</title>
+<style>
+  :root {
+    --bg: #0b0f12;
+    --bg-raised: #11171d;
+    --accent: #00f0ff;
+    --accent-dim: #04bac5;
+    --text: #c5d8e0;
+    --text-dim: #cdcdcd;
+    --border: #1a2630;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html {
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  html::-webkit-scrollbar { display: none; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 16px;
+    min-height: 100vh;
+    padding: 2.5rem 1.25rem 4rem;
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(0, 240, 255, 0.01) 0px,
+      rgba(0, 240, 255, 0.01) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+
+  .wrap { max-width: 700px; margin: 0 auto; }
+
+  .header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.4rem 1rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .header h1 {
+    font-size: 1.35rem;
+    font-weight: 400;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .header h1::after { content: '_'; animation: blink 1.1s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .header .prompt { color: var(--accent-dim); font-size: 0.9rem; }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    color: var(--accent-dim);
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px dotted var(--accent-dim);
+  }
+  .back-link:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  section { margin-bottom: 2rem; }
+
+  h2 {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--accent);
+    margin-bottom: 0.6rem;
+  }
+
+  p, li { font-size: 0.9rem; line-height: 1.7; color: var(--text); }
+  p + p { margin-top: 0.7rem; }
+
+  ul { list-style: none; }
+  li { padding-left: 1.2rem; position: relative; }
+  li::before { content: '▸'; position: absolute; left: 0; color: var(--accent-dim); }
+
+  .note {
+    margin-top: 0.8rem;
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+  }
+
+  .tmdb-logo { display: block; margin-top: 0.8rem; height: 12px; width: auto; }
+
+  a {
+    color: var(--accent-dim);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--accent-dim);
+  }
+  a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .header h1::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <h1>about</h1>
+    <span class="prompt">what this is, and who to thank</span>
+  </div>
+
+  <a class="back-link" href="index.html">&larr; back to calendar</a>
+
+  <section>
+    <h2>what is this</h2>
+    <p>Event Horizon is a community-curated calendar of upcoming sci-fi and cyberpunk releases: movies, series, anime, games, manga, comics, books and albums.</p>
+    <p>No ads, no tracking, and you don't need an account to add something. Every entry was suggested by a fan and approved by a moderator.</p>
+    <p>
+      <a href="submit.html">submit a release</a> ·
+      <a href="https://github.com/bbmane/event-horizon/issues/new?template=report-correction.yml" target="_blank" rel="noopener">report a correction</a> ·
+      <a href="https://github.com/bbmane/event-horizon" target="_blank" rel="noopener">source on GitHub</a>
+    </p>
+  </section>
+
+  <section>
+    <h2>credits</h2>
+    <p>The submission form can autofill title, date and cover from:</p>
+    <ul>
+      <li><a href="https://www.themoviedb.org" target="_blank" rel="noopener">TMDB</a> (movies and TV series)</li>
+      <li><a href="https://anilist.co" target="_blank" rel="noopener">AniList</a> (anime and manga)</li>
+      <li><a href="https://store.steampowered.com" target="_blank" rel="noopener">Steam</a> (video games)</li>
+      <li><a href="https://bandcamp.com" target="_blank" rel="noopener">Bandcamp</a> (albums)</li>
+    </ul>
+    <p class="note">This product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+    <!-- Logo TMDB: scaricalo da https://www.themoviedb.org/about/logos-attribution, mettilo nel repo e decommenta: -->
+    <a href="https://www.themoviedb.org" target="_blank" rel="noopener"><img class="tmdb-logo" src="tmdb-logo.svg" alt="TMDB"></a>
+    <p class="note">Posters and covers belong to their respective owners and link back to the original source.</p>
+  </section>
+
+  <section>
+    <h2>license</h2>
+    <p>The code is open source under the <a href="https://github.com/bbmane/event-horizon/blob/main/LICENSE" target="_blank" rel="noopener">AGPL v3</a>: fork it, run your own version, keep it open.</p>
+    <p>The release data in <code>/data</code> is under <a href="https://github.com/bbmane/event-horizon/blob/main/data/LICENSE" target="_blank" rel="noopener">CC BY-NC-ND 4.0</a>: you can read, share and cite it unmodified with credit to Event Horizon, but not use it commercially or republish a modified version. Build your own dataset instead of copying ours.</p>
+  </section>
+
+</div>
+</body>
+</html>
