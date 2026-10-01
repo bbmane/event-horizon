@@ -505,9 +505,46 @@
     padding: 0 0.2rem;
   }
 
+  /* filtri dentro la barra fissa */
+  .topbar .filters {
+    margin-bottom: 0;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* il pannello tag, aperto, non deve mangiarsi lo schermo */
+  .topbar .tag-panel {
+    margin: 0.6rem 0;
+    max-height: 35vh;
+    overflow-y: auto;
+    background: var(--bg-raised);
+  }
+
   @media (max-width: 520px) {
     .month-strip { display: none; }
-    .topbar { position: static; }   /* su mobile l'header non resta fisso */
+    .topbar { padding-top: 0.8rem; margin-bottom: 0.8rem; }
+    .topbar .header { padding-bottom: 0.5rem; }
+
+    .topbar .filters {
+      gap: 0.5rem 0.6rem;
+      padding: 0.5rem 0;
+      justify-content: flex-start;
+    }
+
+    /* riga 1: le icone dei tipi a tutta larghezza */
+    .topbar .filter-group { order: 1; flex: 1 1 100%; padding: 0rem 0rem; }
+    .topbar .filter-label { display: none; }
+    .topbar .type-filters { flex: 1; gap: 0.25rem; justify-content: space-between; }
+    .topbar .filter-btn { padding: 0.45rem 0.45rem; }
+
+    /* riga 2, tutta a sinistra: tags · clear · conteggio */
+    .topbar .filter-actions { order: 2; width: auto; margin-left: 0; }
+    .topbar .filter-count {
+      order: 3;
+      font-size: 0.85rem;
+      color: var(--accent-dim);
+      opacity: 1;
+    }
   }
 
 </style>
@@ -530,9 +567,7 @@
       </span>
     </div>
     <div class="month-strip" id="monthStrip" aria-label="jump to month"></div>
-  </div>
-
-  <div class="filters">
+    <div class="filters">
     <div class="filter-group">
       <span class="filter-label">type</span>
       <div class="type-filters" id="typeFilters"></div>
@@ -543,8 +578,8 @@
       <button class="clear-filters" id="clearFilters" hidden>clear ×</button>
     </div>
   </div>
-
   <div class="tag-panel" id="tagPanel" hidden></div>
+  </div>
 
   <div class="nav">
     <button id="prevMonth" aria-label="Previous month">&larr; prev</button>
