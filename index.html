@@ -924,6 +924,7 @@
     const filtered = applyFilters(currentEvents);
     updateFilterCount(filtered.length, currentEvents.length);
     render(filtered);
+    drawMonthStrip(currentYear);
     writeUrlState(false);
   }
 
@@ -983,17 +984,17 @@
 
   // --- Striscia dei mesi ---
   const monthStripEl = document.getElementById('monthStrip');
-  const monthHasData = new Map();   // "2026-11" -> true/false
+  const monthEvents = new Map();   // "2026-11" -> [release, ...] (vuoto se manca il file)
 
   async function probeMonths(year) {
     await Promise.all(MONTHS.map(async (_, i) => {
       const key = monthKey(year, i);
-      if (monthHasData.has(key)) return;
+      if (monthEvents.has(key)) return;
       try {
         const r = await fetch(`data/${key}.json`);
-        monthHasData.set(key, r.ok);
+        monthEvents.set(key, r.ok ? await r.json() : []);
       } catch {
-        monthHasData.set(key, false);
+        monthEvents.set(key, []);
       }
     }));
   }
@@ -1018,8 +1019,10 @@
     add('›', 'year-btn', () => goTo(year + 1, currentMonth), 'next year');
 
     MONTHS.forEach((name, i) => {
+      const key = monthKey(year, i);
+      const hasMatches = applyFilters(monthEvents.get(key) || []).length > 0;
       const cls = 'month-btn'
-        + (monthHasData.get(monthKey(year, i)) ? ' has-data' : '')
+        + (hasMatches ? ' has-data' : '')
         + (year === currentYear && i === currentMonth ? ' active' : '');
       add(name.slice(0, 3), cls, () => goTo(year, i), name);
     });
