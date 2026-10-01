@@ -264,6 +264,26 @@
   .autofill-status.ok { color: var(--ok); }
   .autofill-status.err { color: var(--err); }
 
+    .type-options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .type-options label { position: relative; cursor: pointer; }
+  .type-options input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .type-options span {
+    display: block;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid var(--border);
+    background: var(--bg-raised);
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .type-options label:hover span { border-color: var(--accent-dim); }
+  .type-options input:checked + span {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-faint);
+  }
+  .type-options input:focus-visible + span { outline: 1px solid var(--accent); outline-offset: 2px; }
+
 </style>
 <script>
   let showUnderscore = true;
@@ -303,21 +323,20 @@
       <div class="field-error">Title is required.</div>
     </div>
 
-    <div class="field" id="typeField">
-      <label for="type">Type</label>
-      <select id="type" name="type" required>
-        <option value="" disabled selected>select one</option>
-        <option>Movie</option>
-        <option>TV Series</option>
-        <option>Anime</option>
-        <option>Video Game</option>
-        <option>Manga</option>
-        <option>Comic</option>
-        <option>Book</option>
-        <option>Album</option>
-      </select>
+    <fieldset id="typeField">
+      <legend>Type</legend>
+      <div class="type-options">
+        <label><input type="radio" name="type" value="Movie"><span>🎬 Movie</span></label>
+        <label><input type="radio" name="type" value="TV Series"><span>📼 TV Series</span></label>
+        <label><input type="radio" name="type" value="Anime"><span>📺 Anime</span></label>
+        <label><input type="radio" name="type" value="Video Game"><span>🎮 Video Game</span></label>
+        <label><input type="radio" name="type" value="Manga"><span>📖 Manga</span></label>
+        <label><input type="radio" name="type" value="Comic"><span>💥 Comic</span></label>
+        <label><input type="radio" name="type" value="Book"><span>📚 Book</span></label>
+        <label><input type="radio" name="type" value="Album"><span>💽 Album</span></label>
+      </div>
       <div class="field-error">Please select a type.</div>
-    </div>
+    </fieldset>
 
     <div class="field" id="dateField">
       <label for="date">Release date <span class="optional-tag">(optional)</span></label>
@@ -412,7 +431,14 @@
     'Mobile Suit Gundam GQuuuuuuX',
   ];
   titleInput.placeholder = `e.g. ${TITLE_PLACEHOLDER_POOL[Math.floor(Math.random() * TITLE_PLACEHOLDER_POOL.length)]}`;
-  const typeInput = document.getElementById('type');
+  function getType() {
+    const checked = form.querySelector('input[name="type"]:checked');
+    return checked ? checked.value : '';
+  }
+  function setType(value) {
+    const radio = [...form.querySelectorAll('input[name="type"]')].find((r) => r.value === value);
+    if (radio) radio.checked = true;
+  }
   const dateInput = document.getElementById('date');
   const urlInput = document.getElementById('url');
   const titleField = document.getElementById('titleField');
@@ -437,9 +463,9 @@
     if (!titleOk && !firstInvalid) firstInvalid = titleInput;
     ok = ok && titleOk;
 
-    const typeOk = typeInput.value.trim().length > 0;
+    const typeOk = getType() !== '';
     setInvalid(typeField, !typeOk);
-    if (!typeOk && !firstInvalid) firstInvalid = typeInput;
+    if (!typeOk && !firstInvalid) firstInvalid = form.querySelector('input[name="type"]');
     ok = ok && typeOk;
 
     const urlOk = urlInput.checkValidity() && urlInput.value.trim().length > 0;
@@ -457,9 +483,10 @@
   }
 
   // Clear a field's error state as soon as the user fixes it.
-  [titleInput, typeInput, urlInput].forEach((el) => {
+  [titleInput, urlInput].forEach((el) => {
     el.addEventListener('input', () => setInvalid(el.closest('.field'), false));
   });
+  typeField.addEventListener('change', () => setInvalid(typeField, false));
   grid.addEventListener('change', () => {
     if (form.querySelectorAll('input[name="tags"]:checked').length > 0) {
       setInvalid(tagsField, false);
@@ -572,7 +599,7 @@
         filled.push('cover');
       }
       if (result.type) {
-        typeInput.value = result.type;
+        setType(result.type);
         setInvalid(typeField, false);
         filled.push('type');
       }
