@@ -91,7 +91,8 @@ export default async function handler(req, res) {
   let steamResp;
   try {
     steamResp = await fetch(
-      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`
+      `https://store.steampowered.com/api/appdetails?appids=${appId}&cc=us&l=english`,
+      { signal: AbortSignal.timeout(5000) }
     );
   } catch (err) {
     console.error("Steam fetch error", err);
@@ -104,7 +105,13 @@ export default async function handler(req, res) {
     return;
   }
 
-  const body = await steamResp.json();
+  let body;
+  try {
+    body = await steamResp.json();
+  } catch {
+    res.status(502).json({ ok: false, error: "Steam API error, please try again later." });
+    return;
+  }
   const entry = body[appId];
 
   // Per i giochi dietro age-check (18+/mature - violenza, linguaggio forte,
@@ -127,6 +134,8 @@ export default async function handler(req, res) {
   const releaseDate = parseSteamDate(releaseDateText);
   const image = await resolveCoverImage(appId, headerImage);
 
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+  
   res.status(200).json({
     ok: true,
     title,
@@ -148,6 +157,7 @@ async function scrapeStorePage(appId) {
         Cookie: "birthtime=0; lastagecheckage=1-0-1900; wants_mature_content=1",
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
       },
+      signal: AbortSignal.timeout(5000),
     });
   } catch (err) {
     console.error("Steam store page fetch error", err);
@@ -188,7 +198,7 @@ function decodeHtmlEntities(text) {
 async function resolveCoverImage(appId, fallback) {
   const libraryUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${appId}/library_600x900_2x.jpg`;
   try {
-    const head = await fetch(libraryUrl, { method: "HEAD" });
+    const head = await fetch(libraryUrl, { method: "HEAD", signal: AbortSignal.timeout(3000) });
     if (head.ok) return libraryUrl;
   } catch {
     // rete/timeout: ripieghiamo silenziosamente sul fallback
