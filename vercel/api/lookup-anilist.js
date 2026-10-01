@@ -85,7 +85,8 @@ export default async function handler(req, res) {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ query: QUERY, variables: { id: parsed.id, type: parsed.mediaType } }),
-    });
+      signal: AbortSignal.timeout(5000),
+  });
   } catch (err) {
     console.error("AniList fetch error", err);
     res.status(502).json({ ok: false, error: "Could not reach AniList, please try again." });
@@ -111,7 +112,8 @@ export default async function handler(req, res) {
 
   const title = (media.title && (media.title.english || media.title.romaji)) || "";
   const image = (media.coverImage && (media.coverImage.extraLarge || media.coverImage.large)) || "";
-
+  res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
+  
   res.status(200).json({
     ok: true,
     title,
