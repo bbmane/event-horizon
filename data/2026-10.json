@@ -14,6 +14,19 @@
     "image_url": "https://store-images.s-microsoft.com/image/apps.39185.14063970863717875.aa456eb1-a2c5-4b8f-925c-19357bf021ba.c6ce54ed-203f-4a5e-b5af-a0beeef03a23?w=400&h=600"
   },
   {
+    "id": "issue-41",
+    "type": "game",
+    "title": "RetroSpace",
+    "date": "2026-10-01",
+    "source_url": "https://store.steampowered.com/app/2067820/RetroSpace/",
+    "tags": [
+      1,
+      18,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2067820/6abbf057dce132db1bf0e63f72919fde53798fd2/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-39",
     "type": "album",
     "title": "Dissimulator - Artifice Dissolves",

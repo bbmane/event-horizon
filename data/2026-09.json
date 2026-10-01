@@ -116,5 +116,19 @@
       13
     ],
     "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocc6d.jpg"
+  },
+  {
+    "id": "issue-40",
+    "type": "game",
+    "title": "RADIOSOL",
+    "date": "2026-09-30",
+    "source_url": "https://store.steampowered.com/app/2934330/RADIOSOL/",
+    "tags": [
+      5,
+      9,
+      11,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2934330/library_600x900_2x.jpg"
   }
 ]
