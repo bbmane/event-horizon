@@ -1,5 +1,17 @@
 [
   {
+    "id": "issue-42",
+    "type": "movie",
+    "title": "Project Hail Mary",
+    "date": "2026-03-15",
+    "source_url": "https://www.themoviedb.org/movie/687163-project-hail-mary",
+    "tags": [
+      1,
+      18
+    ],
+    "image_url": "https://image.tmdb.org/t/p/w600_and_h900_face/iOb2fjXLbpJgyQXe46n1WtGCnaa.jpg"
+  },
+  {
     "id": "issue-35",
     "type": "manga",
     "title": "Dolls Nest: ORPHANS",
