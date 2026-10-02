@@ -29,6 +29,18 @@
     "image_url": "https://pbs.twimg.com/media/HRtL-2ybQAAy2Ln?format=webp&name=large"
   },
   {
+    "id": "issue-44",
+    "type": "album",
+    "title": "Marien Von Oers - Cruz to Space",
+    "date": "2026-09-09",
+    "source_url": "https://heatcrimes.bandcamp.com/album/cruz-to-space",
+    "tags": [
+      18,
+      13
+    ],
+    "image_url": "https://f4.bcbits.com/img/a0183882100_5.jpg"
+  },
+  {
     "id": "issue-6",
     "type": "album",
     "title": "Current Value - Hard Light",
@@ -77,6 +89,19 @@
       13
     ],
     "image_url": "https://media.themoviedb.org/t/p/original/D8rnntI88rgzWKDK2yuxm25HTQ.jpg"
+  },
+  {
+    "id": "issue-43",
+    "type": "game",
+    "title": "Ved: Recure",
+    "date": "2026-09-21",
+    "source_url": "https://store.steampowered.com/app/3255500/Ved_Recure/?curator_clanid=4777282",
+    "tags": [
+      11,
+      13,
+      17
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3255500/7dd04d899efacc9f5d199b7510ce5666410a1615/library_600x900_2x.jpg"
   },
   {
     "id": "issue-7",
