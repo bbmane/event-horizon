@@ -985,19 +985,18 @@
 
   // --- Striscia dei mesi ---
   const monthStripEl = document.getElementById('monthStrip');
-  const monthEvents = new Map();   // "2026-11" -> [release, ...] (vuoto se manca il file)
+  // Manifest: { "2026-11": [["anime",[3,4]], ["movie",[2]]], ... } - solo
+  // tipo e tag di ogni release, generato da merge.py. Una sola fetch invece
+  // di scaricare tutti i file mensili completi per colorare la striscia.
+  let manifest = {};
+  let manifestPromise = null;
 
-  async function probeMonths(year) {
-    await Promise.all(MONTHS.map(async (_, i) => {
-      const key = monthKey(year, i);
-      if (monthEvents.has(key)) return;
-      try {
-        const r = await fetch(`data/${key}.json`);
-        monthEvents.set(key, r.ok ? await r.json() : []);
-      } catch {
-        monthEvents.set(key, []);
-      }
-    }));
+  function loadManifest() {
+    manifestPromise ||= fetch('data/manifest.json', { cache: 'no-cache' })
+      .then((r) => (r.ok ? r.json() : {}))
+      .then((m) => { manifest = m; })
+      .catch((err) => { console.warn('Could not load data/manifest.json', err); });
+    return manifestPromise;
   }
 
   function drawMonthStrip(year) {
@@ -1021,7 +1020,8 @@
 
     MONTHS.forEach((name, i) => {
       const key = monthKey(year, i);
-      const hasMatches = applyFilters(monthEvents.get(key) || []).length > 0;
+      const hasMatches = (manifest[key] || []).some(([type, tags]) =>
+        applyFilters([{ type, tags }]).length > 0);
       const cls = 'month-btn'
         + (hasMatches ? ' has-data' : '')
         + (year === currentYear && i === currentMonth ? ' active' : '');
@@ -1035,7 +1035,7 @@
   async function renderMonthStrip() {
     const year = currentYear;
     drawMonthStrip(year);          // subito, con i mesi ancora "spenti"
-    await probeMonths(year);
+    await loadManifest();
     if (year === currentYear) drawMonthStrip(year);   // poi evidenzia quelli con dati
   }
 

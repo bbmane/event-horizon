@@ -7,9 +7,14 @@ esistente invece di duplicarlo.
 import glob
 import json
 import os
+import re
 from collections import defaultdict
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
+MANIFEST_FILE = os.path.join(DATA_DIR, "manifest.json")
+
+# Solo i file mensili veri (YYYY-MM.json): esclude tags.json e manifest.json.
+MONTH_FILE_RE = re.compile(r"^\d{4}-\d{2}\.json$")
 
 
 def _month_file(year_month: str) -> str:
@@ -34,10 +39,26 @@ def _save_month(year_month: str, events_by_id: dict):
 
 def _all_month_keys() -> list[str]:
     """Es. ['2026-09', '2026-10', ...] ricavati dai file già presenti in /data."""
-    return [
+    return sorted(
         os.path.splitext(os.path.basename(p))[0]
         for p in glob.glob(os.path.join(DATA_DIR, "*.json"))
-    ]
+        if MONTH_FILE_RE.match(os.path.basename(p))
+    )
+
+
+def rebuild_manifest():
+    """Riscrive data/manifest.json: per ogni mese, solo [tipo, tag] di ogni
+    release (niente titolo/link/immagine). Serve alla striscia dei mesi in
+    index.html per sapere quali mesi hanno release che passano i filtri
+    correnti, senza scaricare tutti i file mensili completi. Va chiamata
+    ogni volta che i file mensili cambiano (merge_events, merge_tags)."""
+    manifest = {}
+    for year_month in _all_month_keys():
+        events = sorted(_load_month(year_month).values(), key=lambda e: e["date"])
+        manifest[year_month] = [[e["type"], e.get("tags", [])] for e in events]
+    with open(MANIFEST_FILE, "w", encoding="utf-8") as f:
+        json.dump(manifest, f, separators=(",", ":"))
+        f.write("\n")
 
 
 def _find_existing_month(event_id: str, skip_month: str) -> str | None:
@@ -89,4 +110,11 @@ def merge_events(all_events: list[dict]) -> dict:
     for event_id, old_month, new_month in moved:
         print(f"  Moved {event_id}: {old_month} -> {new_month}")
 
+    rebuild_manifest()
     return summary
+
+
+if __name__ == "__main__":
+    # Rigenera solo il manifest dai file mensili attuali: python merge.py
+    rebuild_manifest()
+    print(f"Wrote {MANIFEST_FILE}")
