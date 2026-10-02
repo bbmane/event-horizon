@@ -1,5 +1,20 @@
 [
   {
+    "id": "issue-49",
+    "type": "game",
+    "title": "GUNDAM ROGUE ORBIT",
+    "date": "2027-03-04",
+    "source_url": "https://store.steampowered.com/app/1963680/GUNDAM_ROGUE_ORBIT/",
+    "tags": [
+      5,
+      8,
+      12,
+      13,
+      16
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1963680/ba5350b1c4490f2e65e63944769a8ad8ec2eed07/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-30",
     "type": "anime",
     "title": "Patlabor EZY File 3",

@@ -1,5 +1,25 @@
 [
   {
+    "id": "issue-47",
+    "type": "game",
+    "title": "Warhammer 40,000: Dawn of War IV",
+    "date": "2026-12-03",
+    "source_url": "https://store.steampowered.com/app/2272360/Warhammer_40000_Dawn_of_War_IV/",
+    "tags": [
+      1,
+      2,
+      3,
+      5,
+      8,
+      10,
+      11,
+      12,
+      13,
+      16
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2272360/c7dfb77d135e6da1b8a392af39b4272c59b1162a/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-9",
     "type": "movie",
     "title": "Dune: Part Three",
