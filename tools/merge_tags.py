@@ -20,7 +20,11 @@ Uso: python tools/merge_tags.py <old_id> <new_id>
 import glob
 import json
 import os
+import re
 import sys
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from merge import rebuild_manifest
 
 ROOT = os.path.join(os.path.dirname(__file__), "..")
 DATA_DIR = os.path.join(ROOT, "data")
@@ -51,6 +55,8 @@ def merge_tags(old_id: int, new_id: int):
     changed_files = 0
     changed_events = 0
     for path in sorted(glob.glob(os.path.join(DATA_DIR, "*.json"))):
+        if not re.match(r"^\d{4}-\d{2}\.json$", os.path.basename(path)):
+            continue  # salta tags.json, manifest.json
         with open(path, "r", encoding="utf-8") as f:
             events = json.load(f)
 
@@ -77,6 +83,7 @@ def merge_tags(old_id: int, new_id: int):
             t["active"] = False
             t["merged_into"] = new_id
     _save_tags(tags)
+    rebuild_manifest()
 
     print(f"Done: {changed_events} event(s) across {changed_files} file(s) moved from tag {old_id} to {new_id}.")
     print(f"Tag {old_id} marked inactive in data/tags.json (merged_into: {new_id}).")
