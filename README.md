@@ -14,7 +14,7 @@ Event Horizon is a community-curated calendar of upcoming sci-fi releases — bu
 - **See what's coming, at a glance.** A clean, browsable calendar of everything sci-fi and cyberpunk on the horizon — movies, anime, games, manga, and more.
 - **Find exactly your kind of story.** Filter by type and by theme — cyberpunk, dystopian, mecha, space opera, and a dozen more — to surface what you're into, or stumble onto something new.
   <p align="left">
-    <img src="https://i.imgur.com/fqCAJ2i.gif" width="70%">
+    <img src="https://i.imgur.com/xYtvxKi.gif" width="70%">
   </p>
 - **Built by the community, for the community.** Every entry on the calendar was submitted by someone who was excited about it. No submission requires an account, an email, or any personal info at all.
 
