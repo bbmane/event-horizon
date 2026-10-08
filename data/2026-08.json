@@ -1,5 +1,17 @@
 [
   {
+    "id": "issue-51",
+    "type": "manga",
+    "title": "Faceless Dropout",
+    "date": "2026-08-25",
+    "source_url": "https://anilist.co/manga/217051/Faceless-Dropout/",
+    "tags": [
+      2,
+      13
+    ],
+    "image_url": "https://s4.anilist.co/file/anilistcdn/media/manga/cover/large/bx217051-1ybUmN63eeA6.jpg"
+  },
+  {
     "id": "issue-33",
     "type": "game",
     "title": "STAR WARS Zero Company",
