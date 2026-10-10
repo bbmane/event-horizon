@@ -144,6 +144,17 @@
     "image_url": "https://cdn.cloudflare.steamstatic.com/steam/apps/1944880/library_600x900_2x.jpg"
   },
   {
+    "id": "issue-53",
+    "type": "movie",
+    "title": "Digger",
+    "date": "2026-09-28",
+    "source_url": "https://www.themoviedb.org/movie/1248832-digger",
+    "tags": [
+      11
+    ],
+    "image_url": "https://image.tmdb.org/t/p/w600_and_h900_face/1ATXKrIPJyKNwnJ6lcG088Sa6zi.jpg"
+  },
+  {
     "id": "issue-10",
     "type": "game",
     "title": "Nivalis Nights",
