@@ -7,7 +7,7 @@
 
 Event Horizon is a community-curated calendar of upcoming sci-fi releases — built by fans, for fans, with no ads, no tracking, and no algorithm deciding what you should care about.
 
-🤖 [Explore Event Horizon](https://bbmane.github.io/event-horizon/)
+✨ [Explore Event Horizon](https://bbmane.github.io/event-horizon/)
 
 ## Why Event Horizon
 
