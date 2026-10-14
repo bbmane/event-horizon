@@ -88,16 +88,19 @@
     margin-bottom: 1.5rem;
   }
 
-  .nav a {
-    border: 1px solid var(--border);
-    color: var(--text);
+  .nav-link {
+    display: inline-block;
+    background: none;
+    border: 1px solid var(--accent-dim);
+    color: var(--accent);
+    font-family: inherit;
     font-size: 1rem;
-    padding: 0.5rem 1rem;
+    padding: 0.7rem 1.2rem;
     text-decoration: none;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: border-color 0.15s ease, background 0.15s ease;
   }
-  .nav a:hover { border-color: var(--accent-dim); color: var(--accent); }
-  .nav a:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
+  .nav-link:hover { border-color: var(--accent); background: var(--accent-faint); }
+  .nav-link:focus-visible { outline: 1px solid var(--accent); outline-offset: 2px; }
 
   /* --- gallery --- */
   .gallery { margin-bottom: 2.5rem; }
@@ -228,7 +231,7 @@
   </div>
 
   <div class="nav">
-    <a href="index.html">calendar &rarr;</a>
+    <a class="nav-link" href="index.html">calendar &rarr;</a>
   </div>
 
   <div id="galleries"></div>
@@ -366,6 +369,25 @@
     el.append(head, strip);
     return el;
   }
+
+    // Rotella verticale -> scroll orizzontale della gallery sotto il cursore.
+  // Se la gallery è già a inizio/fine, la rotella torna a scorrere la pagina.
+  // I trackpad che producono già scroll orizzontale non vengono toccati.
+  document.getElementById('galleries').addEventListener('wheel', (e) => {
+      const strip = e.target.closest('.strip');
+      if (!strip) return;
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return;
+
+      // Firefox a volte manda il delta in righe invece che in pixel
+      const delta = e.deltaMode === 1 ? e.deltaY * 16 : e.deltaY;
+      const max = strip.scrollWidth - strip.clientWidth;
+      const atStart = strip.scrollLeft <= 0 && delta < 0;
+      const atEnd = strip.scrollLeft >= max - 1 && delta > 0;
+      if (atStart || atEnd) return;
+
+      e.preventDefault();
+      strip.scrollLeft += delta;
+    }, { passive: false });
 
   (async () => {
     const [catalog, config] = await Promise.all([
