@@ -45,6 +45,20 @@ def _all_month_keys() -> list[str]:
         if MONTH_FILE_RE.match(os.path.basename(p))
     )
 
+CATALOG_FILE = os.path.join(DATA_DIR, "catalog.json")
+
+def rebuild_catalog():
+    """Scrive data/catalog.json: tutte le release di tutti i mesi in un unico
+    array ordinato per data. Serve a home.html, che pesca da mesi diversi.
+    File generato: non modificarlo a mano."""
+    catalog = []
+    for year_month in _all_month_keys():
+        catalog.extend(_load_month(year_month).values())
+    catalog.sort(key=lambda e: e["date"])
+    with open(CATALOG_FILE, "w", encoding="utf-8") as f:
+        json.dump(catalog, f, separators=(",", ":"), ensure_ascii=False)
+        f.write("\n")
+    
 
 def rebuild_manifest():
     """Riscrive data/manifest.json: per ogni mese, solo [tipo, tag] di ogni
@@ -59,6 +73,7 @@ def rebuild_manifest():
     with open(MANIFEST_FILE, "w", encoding="utf-8") as f:
         json.dump(manifest, f, separators=(",", ":"))
         f.write("\n")
+        rebuild_catalog()
 
 
 def _find_existing_month(event_id: str, skip_month: str) -> str | None:

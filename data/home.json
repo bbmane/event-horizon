@@ -1,0 +1,7 @@
+{
+  "sections": [
+    { "title": "Upcoming", "include_past": false, "limit": 15 },
+    { "title": "Cyberpunk", "tag": 4, "limit": 12 },
+    { "title": "Mecha", "tag": 8, "limit": 12 }
+  ]
+}
