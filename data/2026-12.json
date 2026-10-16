@@ -20,6 +20,18 @@
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2272360/c7dfb77d135e6da1b8a392af39b4272c59b1162a/library_capsule_2x.jpg"
   },
   {
+    "id": "issue-57",
+    "type": "game",
+    "title": "The Road of Dust and Sorrow",
+    "date": "2026-12-03",
+    "source_url": "https://store.steampowered.com/app/3895110/The_Road_of_Dust_and_Sorrow/",
+    "tags": [
+      5,
+      11
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3895110/999820a744e25bff607b7ac8cc204c8183665f59/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-9",
     "type": "movie",
     "title": "Dune: Part Three",
