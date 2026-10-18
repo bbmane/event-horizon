@@ -189,19 +189,60 @@ function decodeHtmlEntities(text) {
     .replace(/&gt;/g, ">");
 }
 
-// La "library capsule" (copertina verticale, il formato bello per una cover)
-// vive a un URL fisso e prevedibile, costruibile dal solo appid, senza bisogno
-// di alcuna chiamata API: https://cdn.cloudflare.steamstatic.com/steam/apps/<id>/library_600x900_2x.jpg
-// Non tutti i giochi la hanno caricata (soprattutto titoli piccoli/vecchi), quindi
-// verifichiamo con un HEAD prima di usarla, e in caso di assenza ripieghiamo
-// sull'header_image (orizzontale) già presente nella risposta di appdetails.
-async function resolveCoverImage(appId, fallback) {
-  const libraryUrl = `https://cdn.cloudflare.steamstatic.com/steam/apps/${appId}/library_600x900_2x.jpg`;
-  try {
-    const head = await fetch(libraryUrl, { method: "HEAD", signal: AbortSignal.timeout(3000) });
-    if (head.ok) return libraryUrl;
-  } catch {
-    // rete/timeout: ripieghiamo silenziosamente sul fallback
+// Cerca una chiave in tutto l'albero del JSON, senza assumere la sua posizione
+function findKey(obj, key) {
+  if (obj && typeof obj === "object") {
+    if (key in obj) return obj[key];
+    for (const v of Object.values(obj)) {
+      const found = findKey(v, key);
+      if (found !== undefined) return found;
+    }
   }
+  return undefined;
+}
+
+// Chiede a GetItems il path con hash della library capsule (verticale, 600x900).
+// Ritorna null se l'endpoint non risponde o non contiene l'asset.
+async function getVerticalCoverFromStoreApi(appId) {
+  try {
+    const input = {
+      ids: [{ appid: Number(appId) }],
+      context: { language: "english", country_code: "US" },
+      data_request: { include_assets: true },
+    };
+    const url = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify(input))}`;
+    const r = await fetch(url, { signal: AbortSignal.timeout(3000) });
+    if (!r.ok) return null;
+
+    const json = await r.json();
+    const hashPath = findKey(json, "library_capsule_2x");
+    if (typeof hashPath !== "string") return null;
+
+    return `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/${hashPath}`;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveCoverImage(appId, fallback) {
+  // 1. Path con hash da GetItems (copre anche i giochi senza path legacy)
+  const fromStoreApi = await getVerticalCoverFromStoreApi(appId);
+  if (fromStoreApi) return fromStoreApi;
+
+  // 2. Path legacy, verificati con i test
+  const legacy = [
+    `https://cdn.cloudflare.steamstatic.com/steam/apps/${appId}/library_600x900_2x.jpg`,
+    `https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/${appId}/library_600x900_2x.jpg`,
+  ];
+  for (const url of legacy) {
+    try {
+      const head = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(3000) });
+      if (head.ok) return url;
+    } catch {
+      // rete/timeout: prova il successivo
+    }
+  }
+
+  // 3. Orizzontale, come prima
   return fallback;
 }
