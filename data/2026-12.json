@@ -32,6 +32,18 @@
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3895110/999820a744e25bff607b7ac8cc204c8183665f59/library_capsule_2x.jpg"
   },
   {
+    "id": "issue-60",
+    "type": "game",
+    "title": "Mik",
+    "date": "2026-12-07",
+    "source_url": "https://store.steampowered.com/app/2547010/Mik/",
+    "tags": [
+      5,
+      9
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2547010/2a085265ddb8fb50347f2280e4ad646cc0ba8a78/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-9",
     "type": "movie",
     "title": "Dune: Part Three",
