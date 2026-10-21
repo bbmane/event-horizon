@@ -4,7 +4,7 @@ on:
   issues:
     types: [labeled, opened, edited]
   schedule:
-    - cron: "0 6 * * *"   # rete di sicurezza giornaliera alle 6:00 UTC
+    - cron: "0 6 * * *" # rete di sicurezza giornaliera alle 6:00 UTC
   workflow_dispatch:
 
 concurrency:
@@ -19,6 +19,8 @@ jobs:
       issues: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.repository.default_branch }}
 
       - uses: actions/setup-python@v5
         with:
@@ -36,12 +38,17 @@ jobs:
           git config user.name "release-calendar-bot"
           git config user.email "actions@users.noreply.github.com"
           git add data/
-          git diff --staged --quiet && echo "No changes" || git commit -m "Sync approved releases $(date +%F)"
+          if git diff --staged --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Sync approved releases $(date +%F)"
+          git pull --rebase origin main
           git push
 
-# Add this job alongside the existing "sync" job in .github/workflows/sync.yml.
-# It only runs on the "labeled" issue event (not on schedule/dispatch), and only
-# does work when the label added is "approved" — see guard_labels.py.
+  # Add this job alongside the existing "sync" job in .github/workflows/sync.yml.
+  # It only runs on the "labeled" issue event (not on schedule/dispatch), and only
+  # does work when the label added is "approved" — see guard_labels.py.
 
   guard-approved-label:
     if: github.event_name == 'issues' && github.event.action == 'labeled'
@@ -62,9 +69,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python guard_labels.py
 
-# Runs on "opened" (a submitter deletes the "[Release] "/"[Correction] "
-# title prefix thinking it's a placeholder) and "edited" (the prefix gets
-# removed later) — see guard_title.py for the restore logic.
+  # Runs on "opened" (a submitter deletes the "[Release] "/"[Correction] "
+  # title prefix thinking it's a placeholder) and "edited" (the prefix gets
+  # removed later) — see guard_title.py for the restore logic.
 
   guard-title-prefix:
     if: github.event_name == 'issues' && (github.event.action == 'opened' || github.event.action == 'edited')
