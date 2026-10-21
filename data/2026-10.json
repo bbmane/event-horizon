@@ -205,6 +205,18 @@
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3129420/a02c4d7903beb3ebc202325fabb1df2a5dd49e5e/library_capsule_2x.jpg"
   },
   {
+    "id": "issue-63",
+    "type": "game",
+    "title": "You Are Empty [ABSOLUTE EDITION]",
+    "date": "2026-10-27",
+    "source_url": "https://store.steampowered.com/app/4760480/You_Are_Empty_Absolute_Edition/",
+    "tags": [
+      5,
+      11
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4760480/c75f8e2ce1e85f8152c7d69e3a84fdc1f996c0d1/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-54",
     "type": "game",
     "title": "Probably Stolen - Cyberpunk Shopkeeper Sim",
@@ -216,5 +228,17 @@
       13
     ],
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4348910/5cb0a6457762778c2c3bcaaa06768bb77cc791a8/library_capsule_2x.jpg"
+  },
+  {
+    "id": "issue-64",
+    "type": "game",
+    "title": "ATMOSFAR",
+    "date": "2026-10-29",
+    "source_url": "https://store.steampowered.com/app/1798230/ATMOSFAR/",
+    "tags": [
+      18,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1798230/eabd6c40acfd5cc2e0c6efcb076fba0df3a84bd8/library_600x900_2x.jpg"
   }
 ]
