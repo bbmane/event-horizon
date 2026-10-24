@@ -179,6 +179,17 @@
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1713730/7c26182102b6b6031cce93bf10bd9a1592d79b6f/library_capsule_2x.jpg"
   },
   {
+    "id": "issue-65",
+    "type": "album",
+    "title": "MachineCode & Homemade Weapons - TWO",
+    "date": "2026-10-22",
+    "source_url": "https://mcrd101.bandcamp.com/album/two",
+    "tags": [
+      13
+    ],
+    "image_url": "https://f4.bcbits.com/img/a1414636541_5.jpg"
+  },
+  {
     "id": "issue-25",
     "type": "anime",
     "title": "Made in Abyss: Awakening Mystery",
