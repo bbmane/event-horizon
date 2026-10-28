@@ -216,6 +216,29 @@
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3129420/a02c4d7903beb3ebc202325fabb1df2a5dd49e5e/library_capsule_2x.jpg"
   },
   {
+    "id": "issue-66",
+    "type": "album",
+    "title": "MAGNAVOLT - STELLAR GUN 4",
+    "date": "2026-10-23",
+    "source_url": "https://magnavolt.bandcamp.com/album/stellar-gun-4",
+    "tags": [
+      4
+    ],
+    "image_url": "https://f4.bcbits.com/img/a2388308810_5.jpg"
+  },
+  {
+    "id": "issue-67",
+    "type": "album",
+    "title": "BILLAIN - FAFO",
+    "date": "2026-10-26",
+    "source_url": "https://cyberecordings.bandcamp.com/album/fafo",
+    "tags": [
+      4,
+      13
+    ],
+    "image_url": "https://f4.bcbits.com/img/a3096198672_5.jpg"
+  },
+  {
     "id": "issue-63",
     "type": "game",
     "title": "You Are Empty [ABSOLUTE EDITION]",
