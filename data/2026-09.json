@@ -91,6 +91,18 @@
     "image_url": "https://media.themoviedb.org/t/p/original/D8rnntI88rgzWKDK2yuxm25HTQ.jpg"
   },
   {
+    "id": "issue-69",
+    "type": "album",
+    "title": "Aeronexus - Virtua Interface",
+    "date": "2026-09-18",
+    "source_url": "https://timeslaves.bandcamp.com/album/virtua-interface",
+    "tags": [
+      18,
+      13
+    ],
+    "image_url": "https://f4.bcbits.com/img/a1434516878_5.jpg"
+  },
+  {
     "id": "issue-43",
     "type": "game",
     "title": "Ved: Recure",
