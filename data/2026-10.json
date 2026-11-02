@@ -167,6 +167,19 @@
     "image_url": "https://s4.anilist.co/file/anilistcdn/media/anime/cover/large/bx195539-jaarfaxv6K0Z.jpg"
   },
   {
+    "id": "issue-70",
+    "type": "game",
+    "title": "Mycopunk",
+    "date": "2026-10-20",
+    "source_url": "https://store.steampowered.com/app/3247750/Mycopunk/",
+    "tags": [
+      2,
+      18,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3247750/aec17c882d85fa0b486fc26fef596bee466670d2/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-29",
     "type": "movie",
     "title": "Clayface (2026)",
