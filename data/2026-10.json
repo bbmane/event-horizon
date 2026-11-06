@@ -300,5 +300,19 @@
       13
     ],
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1798230/eabd6c40acfd5cc2e0c6efcb076fba0df3a84bd8/library_600x900_2x.jpg"
+  },
+  {
+    "id": "issue-72",
+    "type": "game",
+    "title": "HELENA : Cloud District",
+    "date": "2026-10-29",
+    "source_url": "https://store.steampowered.com/app/5190580/HELENA_Cloud_District/",
+    "tags": [
+      5,
+      9,
+      13,
+      11
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/5190580/4075cc39b9e925ee82e2301374054fb86f243d72/library_capsule_2x.jpg"
   }
 ]
