@@ -526,6 +526,12 @@
       matches: (u) => /(^|\.)themoviedb\.org$/.test(u.hostname) && /\/(movie|tv)\/\d+/.test(u.pathname),
       hint: "If this is an anime, switch Type to Anime manually — TMDB can't tell the difference.",
     },
+    {
+      id: 'backloggd',
+      label: 'Backloggd',
+      matches: (u) => /(^|\.)backloggd\.com$/.test(u.hostname)
+        && /^\/games\/(?!lib\/)[^/]+/.test(u.pathname),
+    },
   ];
 
   // Elenco leggibile delle fonti autofill davvero attive, così chi compila
