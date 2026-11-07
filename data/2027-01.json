@@ -29,5 +29,19 @@
       16
     ],
     "image_url": "https://m.media-amazon.com/images/M/MV5BNzJhNzc5ZjgtMjY1OC00ZTQyLWE2NmItYzAzNmI2ZWFhNjNiXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"
+  },
+  {
+    "id": "issue-74",
+    "type": "game",
+    "title": "Metroid Ravenous",
+    "date": "2027-01-28",
+    "source_url": "https://backloggd.com/games/metroid-ravenous/",
+    "tags": [
+      1,
+      2,
+      18,
+      13
+    ],
+    "image_url": "https://images.igdb.com/igdb/image/upload/t_cover_big_2x/cocvge.jpg"
   }
 ]
