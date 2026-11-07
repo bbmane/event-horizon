@@ -71,12 +71,13 @@ Merging two existing tags into one is the only case that rewrites historical dat
 
 When a pasted source link matches a supported site, `submit.html` shows an "autofill" button that calls the matching serverless endpoint and pre-fills the form. All endpoints live in `vercel/api/`, are `GET`, take the link as `?url=...`, and return `{ ok, title, date, image, type }`. `date` is left empty whenever it can't be determined reliably, so the user fills it in by hand rather than risking a wrong one.
 
-| Endpoint             | Source                  | Notes                                                                                                                                                                    |
-| -------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `lookup-steam.js`    | Steam Store API         | Falls back to scraping the store page for age-gated games. Always returns `Video Game`.                                                                                  |
-| `lookup-anilist.js`  | AniList GraphQL         | Knows Anime vs Manga natively, so `type` is reliable.                                                                                                                    |
-| `lookup-bandcamp.js` | Bandcamp page meta tags | Title/cover from `og:` tags, date parsed from the `description` meta. Always returns `Album`.                                                                            |
-| `lookup-tmdb.js`     | TMDB API                | Needs the `TMDB_TOKEN` env var. Can't tell anime from movies/series, so `submit.html` shows a hint. For series, `date` is the very first air date, not the new season's. |
+| Endpoint              | Source                   | Notes                                                                                                                                                                    |
+| --------------------- | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `lookup-steam.js`     | Steam Store API          | Falls back to scraping the store page for age-gated games. Always returns `Video Game`.                                                                                  |
+| `lookup-anilist.js`   | AniList GraphQL          | Knows Anime vs Manga natively, so `type` is reliable.                                                                                                                    |
+| `lookup-bandcamp.js`  | Bandcamp page meta tags  | Title/cover from `og:` tags, date parsed from the `description` meta. Always returns `Album`.                                                                            |
+| `lookup-backloggd.js` | Backloggd page meta tags | Title/cover from og: tags, date from the release_year link. Always returns Video Game. Cloudflare may block it.                                                          |
+| `lookup-tmdb.js`      | TMDB API                 | Needs the `TMDB_TOKEN` env var. Can't tell anime from movies/series, so `submit.html` shows a hint. For series, `date` is the very first air date, not the new season's. |
 
 Only `TMDB_TOKEN` is a new env var; the others reuse `ALLOWED_ORIGIN` already set for `/api/submit`. Successful lookups are cached at the Vercel edge for an hour.
 

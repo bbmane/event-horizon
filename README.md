@@ -23,7 +23,7 @@ Event Horizon is a community-curated calendar of upcoming sci-fi releases — bu
 Spotted something missing? Adding it takes less than a minute:
 
 1. Head to the **[Submit a Release](https://bbmane.github.io/event-horizon/submit.html)** page.
-2. Paste a source link. For Steam, AniList, Bandcamp and TMDB links, one click autofills title, date and cover. Then pick the type and the themes that fit.
+2. Paste a source link. For Steam, AniList, Bandcamp, Backloggd and TMDB links, one click autofills title, date and cover. Then pick the type and the themes that fit.
 3. The release date is optional: if nothing has been announced yet, leave it blank and it'll be added once a date is confirmed.
 4. Once a moderator approves it, it shows up on the calendar automatically.
 

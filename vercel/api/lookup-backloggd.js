@@ -92,9 +92,14 @@ function parseReleaseDateText(text) {
   return "";
 }
 
-// "Hades II | Backloggd" / "Hades II - Backloggd" -> "Hades II"
+// Backloggd mette l'anno di uscita tra parentesi nell'og:title:
+// "Metroid Ravenous (2027) | Backloggd" -> "Metroid Ravenous".
+// Se serve disambiguare un remake, il titolo si ritocca a mano nel form.
 function cleanTitle(ogTitle) {
-  return decodeHtmlEntities(ogTitle).replace(/\s*[|\-–—]\s*Backloggd\s*$/i, "").trim();
+  return decodeHtmlEntities(ogTitle)
+    .replace(/\s*[|\-–—]\s*Backloggd\s*$/i, "")
+    .replace(/\s*\(\d{4}\)\s*$/, "")
+    .trim();
 }
 
 // Porta la cover IGDB al formato verticale grande già usato nel calendario.
@@ -106,6 +111,49 @@ function normalizeCover(src) {
     url = url.replace(/\/t_[a-z0-9_]+\//, "/t_cover_big_2x/");
   }
   return /^https?:\/\//.test(url) ? url : "";
+}
+
+function htmlToText(fragment) {
+  return decodeHtmlEntities(
+    fragment
+      .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+  ).replace(/\s+/g, " ").trim();
+}
+
+const DATE_SRC = "([A-Za-z]{3,9}\\.?\\s+\\d{1,2},?\\s+\\d{4}|\\d{1,2}\\s+[A-Za-z]{3,9}\\.?,?\\s+\\d{4})";
+
+// Il badge con la data ("Upcoming  Jan 28, 2027" / "Released ...") sta nella
+// testata della pagina, subito dopo il titolo <h1>. Non conoscendo il markup
+// esatto, proviamo in ordine, dal più al meno affidabile:
+//   1. link /games/lib/release_year:<anno> con una data completa come testo
+//   2. etichetta "Upcoming" / "Released" seguita da una data, nella testata
+//   3. la prima data completa nei primi caratteri di testo dopo l'<h1>
+//      (abbastanza stretto da non pescare date dalla descrizione o dalle review)
+// Se non c'è una data completa (solo anno, "TBD") ritorna "".
+function findReleaseDate(html) {
+  const link = html.match(
+    /<a[^>]+href=["']\/games\/lib\/release_year:\d{4}[^"']*["'][^>]*>\s*([^<]+?)\s*<\/a>/i
+  );
+  if (link) {
+    const d = parseReleaseDateText(decodeHtmlEntities(link[1]));
+    if (d) return d;
+  }
+
+  const h1 = html.search(/<h1[\s>]/i);
+  if (h1 < 0) return "";
+  const header = htmlToText(html.slice(h1, h1 + 8000));
+
+  const labelled = header.match(
+    new RegExp(`(?:Upcoming|Released(?:\\s+on)?|Release\\s+date)\\s*:?\\s*${DATE_SRC}`, "i")
+  );
+  if (labelled) {
+    const d = parseReleaseDateText(labelled[1]);
+    if (d) return d;
+  }
+
+  const near = header.slice(0, 300).match(new RegExp(DATE_SRC));
+  return near ? parseReleaseDateText(near[1]) : "";
 }
 
 export default async function handler(req, res) {
@@ -165,11 +213,7 @@ export default async function handler(req, res) {
 
   const ogImage = extractMetaContent(html, "property", "og:image");
 
-  let releaseDate = "";
-  const dateMatch = html.match(
-    /<a[^>]+href=["']\/games\/lib\/release_year:\d{4}[^"']*["'][^>]*>\s*([^<]+?)\s*<\/a>/i
-  );
-  if (dateMatch) releaseDate = parseReleaseDateText(decodeHtmlEntities(dateMatch[1]));
+  const releaseDate = findReleaseDate(html);
 
   res.setHeader("Cache-Control", "public, s-maxage=3600, stale-while-revalidate=86400");
   res.status(200).json({
