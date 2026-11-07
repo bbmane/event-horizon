@@ -196,8 +196,8 @@
   }
 
   .event .thumb {
-    width: 5.2rem;
-    height: 5.2rem;
+    width: 8.2rem;
+    height: 8.2rem;
     object-fit: cover;
     border: 1px solid var(--border);
     flex-shrink: 0;
@@ -224,8 +224,8 @@
 
   .img-preview img {
     display: block;
-    max-width: 200px;
-    max-height: 260px;
+    max-width: 280px;
+    max-height: 400px;
     width: auto;
     height: auto;
     object-fit: contain;
@@ -648,8 +648,8 @@
     const rect = thumbEl.getBoundingClientRect();
     const margin = 10;
     const previewRect = imgPreview.getBoundingClientRect();
-    const pw = previewRect.width || 210;
-    const ph = previewRect.height || 210;
+    const pw = previewRect.width || 292;
+    const ph = previewRect.height || 412;
 
     let left = rect.right + margin;
     if (left + pw > window.innerWidth) {
