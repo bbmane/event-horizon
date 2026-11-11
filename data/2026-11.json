@@ -52,6 +52,52 @@
     "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2378230/29cbf1dc97aec285be8e704d0e1cb5aaa9e51ca5/library_600x900_2x.jpg"
   },
   {
+    "id": "issue-77",
+    "type": "game",
+    "title": "Warhammer Survivors",
+    "date": "2026-11-10",
+    "source_url": "https://store.steampowered.com/app/3669620/Warhammer_Survivors/?curator_clanid=4777282",
+    "tags": [
+      1,
+      3,
+      5,
+      8,
+      10,
+      18,
+      12,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3669620/fa4dd38e50c9ad0d107887ae3bc7a1e6c3cd7cba/library_capsule_2x.jpg"
+  },
+  {
+    "id": "issue-76",
+    "type": "game",
+    "title": "Ashes of the Singularity II",
+    "date": "2026-11-10",
+    "source_url": "https://store.steampowered.com/app/3499790/Ashes_of_the_Singularity_II/?curator_clanid=4777282",
+    "tags": [
+      8,
+      18,
+      12,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3499790/cc9ff2a62c58096759177de7e7316d038ace9f5b/library_capsule_2x.jpg"
+  },
+  {
+    "id": "issue-78",
+    "type": "game",
+    "title": "Wall World Strategy",
+    "date": "2026-11-11",
+    "source_url": "https://store.steampowered.com/app/4218360/Wall_World_Strategy/",
+    "tags": [
+      1,
+      2,
+      18,
+      13
+    ],
+    "image_url": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/4218360/538492789aee62c8cf3c8b5e3de232942f1e198e/library_capsule_2x.jpg"
+  },
+  {
     "id": "issue-73",
     "type": "game",
     "title": "DERELIKT",
